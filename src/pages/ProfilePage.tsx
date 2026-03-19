@@ -44,10 +44,10 @@ const ProfilePage: React.FC = () => {
 
   const tabs = [
     { id: 'Account Info', icon: '👤' },
-    { id: 'My Order',     icon: '📦' },
-    { id: 'My Address',   icon: '📍' },
+    { id: 'My Order', icon: '📦' },
+    { id: 'My Address', icon: '📍' },
     { id: 'Notifications', icon: '🔔' },
-    { id: 'Logout',       icon: '🚪' },
+    { id: 'Logout', icon: '🚪' },
   ];
 
   return (
@@ -80,13 +80,12 @@ const ProfilePage: React.FC = () => {
               <button
                 key={tab.id}
                 onClick={() => tab.id === 'Logout' ? (logout(), navigate('/login')) : setActiveTab(tab.id)}
-                className={`w-full text-left px-4 py-3.5 font-semibold text-sm border-b border-gray-50 last:border-0 flex items-center gap-3 transition-colors ${
-                  activeTab === tab.id && tab.id !== 'Logout'
+                className={`w-full text-left px-4 py-3.5 font-semibold text-sm border-b border-gray-50 last:border-0 flex items-center gap-3 transition-colors ${activeTab === tab.id && tab.id !== 'Logout'
                     ? 'bg-[#007F2D] text-white'
                     : tab.id === 'Logout'
                       ? 'text-red-500 hover:bg-red-50'
                       : 'text-gray-600 hover:text-[#007F2D] hover:bg-green-50'
-                }`}
+                  }`}
               >
                 <span>{tab.icon}</span>
                 {tab.id}
@@ -194,14 +193,16 @@ const ProfilePage: React.FC = () => {
 
           {/* Empty states or Orders */}
           {activeTab === 'My Order' && (
-             <OrdersTab />
+            <OrdersTab />
           )}
 
-          {(activeTab === 'My Address' || activeTab === 'Notifications') && (
+          {activeTab === 'My Address' && (
+            <AddressesTab />
+          )}
+
+          {activeTab === 'Notifications' && (
             <div className="bg-white p-12 rounded-xl border border-gray-100 shadow-sm flex flex-col items-center justify-center text-center min-h-[260px]">
-              <span className="text-5xl mb-4">
-                {activeTab === 'My Address' ? '📍' : '🔔'}
-              </span>
+              <span className="text-5xl mb-4">🔔</span>
               <h2 className="text-gray-800 font-bold mb-1 text-lg">{activeTab}</h2>
               <p className="text-sm text-gray-400">This section is currently empty.</p>
             </div>
@@ -241,36 +242,83 @@ const OrdersTab = () => {
       {orders.map(order => (
         <div key={order._id} className="bg-white border border-gray-100 rounded-xl p-5 shadow-sm">
           <div className="flex justify-between items-center mb-4 border-b border-gray-50 pb-3">
-             <div>
-               <p className="text-xs font-bold text-gray-500 uppercase tracking-wide">Order ID: {order._id}</p>
-               <p className="text-[11px] text-gray-400">{new Date(order.createdAt).toLocaleDateString()}</p>
-             </div>
-             <span className="bg-green-50 text-[#007F2D] text-xs font-bold px-3 py-1.5 rounded-full border border-green-200">
-                {order.status || 'Pending'}
-             </span>
+            <div>
+              <p className="text-xs font-bold text-gray-500 uppercase tracking-wide">Order ID: {order._id}</p>
+              <p className="text-[11px] text-gray-400">{new Date(order.createdAt).toLocaleDateString()}</p>
+            </div>
+            <span className="bg-green-50 text-[#007F2D] text-xs font-bold px-3 py-1.5 rounded-full border border-green-200">
+              {order.status || 'Pending'}
+            </span>
           </div>
           <div className="space-y-3 mb-4">
             {order.items?.map((item: any, i: number) => (
-               <div key={i} className="flex gap-4 items-center">
-                 <img src={item.image || 'https://placehold.co/40x40/f3f4f6/9ca3af?text=Pic'} alt={item.name} className="w-12 h-12 object-contain border border-gray-100 rounded p-1 shadow-sm" />
-                 <div className="flex-1">
-                   <p className="text-sm font-bold text-gray-800">{item.name}</p>
-                   <p className="text-xs text-gray-500">Qty: {item.quantity} x ₹{item.price}</p>
-                 </div>
-                 <p className="font-bold text-[#007F2D] text-sm hidden sm:block">₹{item.quantity * item.price}</p>
-               </div>
+              <div key={i} className="flex gap-4 items-center">
+                <img src={item.image || 'https://placehold.co/40x40/f3f4f6/9ca3af?text=Pic'} alt={item.name} className="w-12 h-12 object-contain border border-gray-100 rounded p-1 shadow-sm" />
+                <div className="flex-1">
+                  <p className="text-sm font-bold text-gray-800">{item.name}</p>
+                  <p className="text-xs text-gray-500">Qty: {item.quantity} x ₹{item.price}</p>
+                </div>
+                <p className="font-bold text-[#007F2D] text-sm hidden sm:block">₹{item.quantity * item.price}</p>
+              </div>
             ))}
           </div>
           <div className="flex justify-between items-center pt-3 border-t border-gray-50">
-             <div className="text-xs text-gray-500">
-               <span className="font-bold text-gray-700">Deliver To:</span> {order.deliveryAddress?.fullName || 'N/A'}, {order.deliveryAddress?.addressLine1 || ''}
-             </div>
-             <p className="text-sm">Total: <span className="font-extrabold text-gray-900 text-lg">₹{order.totalAmount}</span></p>
+            <div className="text-xs text-gray-500">
+              <span className="font-bold text-gray-700">Deliver To:</span> {order.deliveryAddress?.fullName || 'N/A'}, {order.deliveryAddress?.addressLine1 || ''}
+            </div>
+            <p className="text-sm">Total: <span className="font-extrabold text-gray-900 text-lg">₹{order.totalAmount}</span></p>
           </div>
         </div>
       ))}
     </div>
   );
 }
+
+const AddressesTab = () => {
+  const [addresses, setAddresses] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    api.get('/user/addresses').then(res => {
+      setAddresses(res.data.addresses || []);
+      setLoading(false);
+    }).catch(() => setLoading(false));
+  }, []);
+
+  if (loading) return <div className="p-8 text-center text-gray-500 font-bold">Loading Addresses...</div>;
+
+  if (addresses.length === 0) {
+    return (
+      <div className="bg-white p-12 rounded-xl border border-gray-100 shadow-sm flex flex-col items-center justify-center text-center min-h-[260px]">
+        <span className="text-5xl mb-4">📍</span>
+        <h2 className="text-gray-800 font-bold mb-1 text-lg">No Address Found</h2>
+        <p className="text-sm text-gray-400">Please add an address during checkout to see it here.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      <h1 className="text-xl font-extrabold text-gray-900 mb-5">My Delivery Addresses</h1>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {addresses.map(addr => (
+          <div key={addr._id} className="bg-white border border-gray-100 rounded-xl p-5 shadow-sm relative hover:border-[#007F2D] transition-colors group">
+            <div className="flex items-center justify-between mb-3">
+              <span className={`text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full ${addr.type === 'Home' ? 'bg-green-50 text-[#007F2D]' : 'bg-blue-50 text-blue-600'}`}>
+                {addr.type || 'Other'}
+              </span>
+              <button className="text-gray-300 group-hover:text-gray-400 group-hover:scale-110 transition-all">✏️</button>
+            </div>
+            <p className="font-bold text-gray-800 text-sm mb-1">{addr.fullName}</p>
+            <p className="text-xs text-gray-400 font-bold mb-3">+91 {addr.mobile}</p>
+            <p className="text-xs text-gray-600 leading-relaxed font-medium">
+              {addr.flatNo}, {addr.addressLine1}
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
 
 export default ProfilePage;

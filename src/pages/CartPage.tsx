@@ -17,10 +17,15 @@ const CartPage: React.FC = () => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [deleteToast, setDeleteToast] = useState('');
+  const [toast, setToast] = useState<{ msg: string; type: 'success' | 'error' | 'info' | '' }>({ msg: '', type: '' });
   const [formData, setFormData] = useState({
     fullName: '', mobile: '', addressLine1: '', flatNo: '', type: 'Home'
   });
+
+  const showToast = (msg: string, type: 'success' | 'error' | 'info' = 'success') => {
+    setToast({ msg, type });
+    setTimeout(() => setToast({ msg: '', type: '' }), 4000);
+  };
 
   useEffect(() => {
     if (user) {
@@ -35,15 +40,16 @@ const CartPage: React.FC = () => {
 
   const handleSaveAddress = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) return alert('Please login to save address');
+    if (!user) return showToast('Please login to save address', 'error');
     try {
       const res = await api.post('/user/address', formData);
       setAddresses(res.data.addresses);
       setSelectedAddressId(res.data.addresses[res.data.addresses.length - 1]._id);
       setShowAddModal(false);
       setFormData({ fullName: '', mobile: '', addressLine1: '', flatNo: '', type: 'Home' });
+      showToast('Address saved successfully!', 'success');
     } catch {
-      alert('Failed to save address');
+      showToast('Failed to save address', 'error');
     }
   };
 
@@ -80,8 +86,8 @@ const CartPage: React.FC = () => {
   const grandTotal = subTotal + gst + handlingFee + deliveryCharges;
 
   const handleCheckoutClick = () => {
-    if (!user) return alert('Please login to checkout');
-    if (!selectedAddressId) return alert('Please add and select a delivery address');
+    if (!user) return showToast('Please login to checkout', 'error');
+    if (!selectedAddressId) return showToast('Please add and select a delivery address', 'error');
     setShowConfirmModal(true);
   };
 
@@ -102,11 +108,11 @@ const CartPage: React.FC = () => {
       clearCart();
       setIsProcessing(false);
       setShowConfirmModal(false);
-      alert('Order created successfully! Check your profile for details.');
-      navigate('/');
+      showToast('Order created successfully! Redirecting...', 'success');
+      setTimeout(() => navigate('/profile'), 2000);
     } catch (e: any) {
       console.error(e);
-      alert('Failed to create order: ' + (e.response?.data?.error || e.message));
+      showToast('Failed: ' + (e.response?.data?.error || e.message), 'error');
       setIsProcessing(false);
     }
   };
@@ -114,8 +120,7 @@ const CartPage: React.FC = () => {
   const handleRemoveItem = async (productId: string, name: string) => {
     try {
       await removeFromCart(productId);
-      setDeleteToast(`Removed ${name} from cart`);
-      setTimeout(() => setDeleteToast(''), 3000);
+      showToast(`Removed ${name} from cart`, 'info');
     } catch (e) {
       console.error(e);
     }
@@ -125,18 +130,21 @@ const CartPage: React.FC = () => {
     <div className="min-h-screen bg-white">
       <Header />
 
-      {/* DELETE TOAST */}
-      {deleteToast && (
-        <div className="fixed top-20 right-5 bg-red-50 text-red-500 border border-red-200 px-5 py-3 rounded-lg font-bold text-sm shadow-xl z-[100] animate-fade-in flex items-center gap-2">
-          <span>🗑️</span> {deleteToast}
+      {/* GLOBAL TOAST */}
+      {toast.msg && (
+        <div className={`fixed top-24 right-5 ${toast.type === 'success' ? 'bg-green-50 text-[#007F2D] border-green-200' : toast.type === 'error' ? 'bg-red-50 text-red-500 border-red-200' : 'bg-blue-50 text-blue-600 border-blue-200'} border px-5 py-3 rounded-xl font-black text-sm shadow-2xl z-[100] animate-fade-in flex items-center gap-3 min-w-[280px]`}>
+          <span className="text-xl">
+            {toast.type === 'success' ? '✅' : toast.type === 'error' ? '❌' : 'ℹ️'}
+          </span>
+          {toast.msg}
         </div>
       )}
 
       <main className="max-w-[1200px] mx-auto px-4 py-8 flex flex-col lg:flex-row gap-10 items-start">
-        
+
         {/* LEFT COLUMN: Cart Items & Summary */}
         <div className="w-full lg:w-[60%] shrink-0">
-          
+
           {/* Items */}
           <div className="space-y-4 mb-6">
             {cart.items.filter(i => i.product != null).map((item) => (
@@ -156,7 +164,7 @@ const CartPage: React.FC = () => {
                     <span className="font-bold text-[#007F2D] text-sm">₹{item.product?.price || item.price}</span>
                   </div>
                 </div>
-                
+
                 {/* Quantity Controls */}
                 <div className="flex flex-col items-end gap-2 pr-2">
                   <button onClick={() => handleRemoveItem(item.product._id, item.product.name)} className="text-green-600 hover:text-red-500 transition-colors" title="Remove">🗑️</button>
@@ -209,7 +217,7 @@ const CartPage: React.FC = () => {
               <span className="font-extrabold text-gray-900">Total Amount</span>
               <span className="font-extrabold text-gray-900 text-lg">₹{grandTotal.toFixed(2)}</span>
             </div>
-            
+
             <div className="flex flex-col sm:flex-row gap-4">
               <Link to="/products" className="border border-[#007F2D] text-[#007F2D] font-bold py-3 px-6 rounded-xl hover:bg-green-50 text-center flex-1 text-sm flex items-center justify-center gap-2">
                 + Add More items
@@ -232,7 +240,7 @@ const CartPage: React.FC = () => {
 
           {!user ? (
             <div className="border-2 border-dashed border-gray-200 rounded-xl p-8 flex flex-col items-center justify-center bg-gray-50 h-48">
-               <p className="text-sm text-gray-500 font-medium text-center">Please login to add a delivery address.</p>
+              <p className="text-sm text-gray-500 font-medium text-center">Please login to add a delivery address.</p>
             </div>
           ) : addresses.length === 0 ? (
             <div className="border-2 border-dashed border-[#8bc5a0] rounded-xl p-8 flex flex-col items-center justify-center bg-[#f7fcf9] text-center h-48 cursor-pointer hover:bg-green-50" onClick={() => setShowAddModal(true)}>
@@ -243,19 +251,19 @@ const CartPage: React.FC = () => {
           ) : (
             <div className="space-y-3">
               {addresses.map(addr => (
-                <div 
-                  key={addr._id} 
+                <div
+                  key={addr._id}
                   onClick={() => setSelectedAddressId(addr._id)}
                   className={`border rounded-xl p-4 cursor-pointer relative flex gap-3 ${selectedAddressId === addr._id ? 'border-[#007F2D] bg-[#f7fcf9]' : 'border-gray-200 bg-white hover:border-gray-300'}`}
                 >
                   <div className="pt-1 select-none">
-                     <input type="radio" checked={selectedAddressId === addr._id} readOnly className="accent-[#007F2D] w-4 h-4" />
+                    <input type="radio" checked={selectedAddressId === addr._id} readOnly className="accent-[#007F2D] w-4 h-4" />
                   </div>
                   <div>
                     <p className="font-bold text-sm text-gray-800 mb-1">{addr.fullName} <span className="text-gray-400 font-normal">({addr.mobile})</span> | <span className="font-bold">{addr.type}</span></p>
                     <p className="text-xs text-gray-500 leading-tight pr-6 relative">{addr.flatNo}, {addr.addressLine1}</p>
                     <div className="absolute right-4 top-4 flex gap-2">
-                       <button className="text-[#007F2D] hover:scale-110">✏️</button>
+                      <button className="text-[#007F2D] hover:scale-110">✏️</button>
                     </div>
                   </div>
                 </div>
@@ -274,39 +282,39 @@ const CartPage: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div>
                   <label className="text-xs font-bold text-gray-600 mb-1.5 block">Full Name *</label>
-                  <input required placeholder="Enter your name" className="w-full border p-2.5 rounded focus:border-[#007F2D] outline-none text-sm" value={formData.fullName} onChange={e => setFormData({...formData, fullName: e.target.value})} />
+                  <input required placeholder="Enter your name" className="w-full border p-2.5 rounded focus:border-[#007F2D] outline-none text-sm" value={formData.fullName} onChange={e => setFormData({ ...formData, fullName: e.target.value })} />
                 </div>
                 <div>
                   <label className="text-xs font-bold text-gray-600 mb-1.5 block">Mobile *</label>
-                  <input required placeholder="10 digit mobile number" className="w-full border p-2.5 rounded focus:border-[#007F2D] outline-none text-sm" value={formData.mobile} onChange={e => setFormData({...formData, mobile: e.target.value})} />
+                  <input required placeholder="10 digit mobile number" className="w-full border p-2.5 rounded focus:border-[#007F2D] outline-none text-sm" value={formData.mobile} onChange={e => setFormData({ ...formData, mobile: e.target.value })} />
                 </div>
               </div>
-              
-              <div>
+
+              {/* <div>
                 <label className="text-xs font-bold text-gray-600 mb-1.5 block">Address *</label>
                 <div className="border border-blue-200 bg-blue-50 text-blue-600 text-xs font-bold inline-flex px-3 py-1 rounded mb-2 hover:bg-blue-100 cursor-pointer items-center gap-1">
                   📍 Use Current Location
                 </div>
                 <input required placeholder="Area, Street, Sector, Village" className="w-full border p-2.5 rounded focus:border-[#007F2D] outline-none text-sm" value={formData.addressLine1} onChange={e => setFormData({...formData, addressLine1: e.target.value})} />
-              </div>
+              </div> */}
 
 
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div>
                   <label className="text-xs font-bold text-gray-600 mb-1.5 block">Flat No / House No /Building No *</label>
-                  <input required placeholder="" className="w-full border border-green-400 p-2.5 rounded focus:border-[#007F2D] outline-none text-sm" value={formData.flatNo} onChange={e => setFormData({...formData, flatNo: e.target.value})} />
+                  <input required placeholder="" className="w-full border border-green-400 p-2.5 rounded focus:border-[#007F2D] outline-none text-sm" value={formData.flatNo} onChange={e => setFormData({ ...formData, flatNo: e.target.value })} />
                 </div>
                 <div>
                   <label className="text-xs font-bold text-gray-600 mb-1.5 block">Type *</label>
-                  <select className="w-full border p-2.5 rounded focus:border-[#007F2D] outline-none text-sm bg-white" value={formData.type} onChange={e => setFormData({...formData, type: e.target.value})}>
+                  <select className="w-full border p-2.5 rounded focus:border-[#007F2D] outline-none text-sm bg-white" value={formData.type} onChange={e => setFormData({ ...formData, type: e.target.value })}>
                     <option>Home</option>
                     <option>Office</option>
                     <option>Other</option>
                   </select>
                 </div>
               </div>
-              
+
               <div className="flex gap-4 pt-4">
                 <button type="submit" className="bg-[#007F2D] text-white px-8 py-2.5 rounded-lg font-bold hover:bg-[#006e27]">SAVE</button>
                 <button type="button" onClick={() => setShowAddModal(false)} className="border border-[#007F2D] text-[#007F2D] px-8 py-2.5 rounded-lg font-bold hover:bg-green-50">Cancel</button>
@@ -320,17 +328,17 @@ const CartPage: React.FC = () => {
       {showConfirmModal && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 animate-fade-in">
           <div className="bg-white rounded-2xl w-full max-w-sm shadow-2xl p-6 text-center transform inline-block">
-             <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center text-[#007F2D] text-3xl mx-auto mb-4">
-               🛒
-             </div>
-             <h2 className="text-xl font-bold text-gray-800 mb-2">Confirm Order?</h2>
-             <p className="text-gray-500 text-sm mb-6">Are you sure you want to place the order with Cash on Delivery? Total: <strong className="text-gray-900">₹{grandTotal.toFixed(2)}</strong></p>
-             <div className="flex gap-3">
-               <button onClick={() => setShowConfirmModal(false)} className="flex-1 py-2 rounded-lg font-bold text-gray-500 bg-gray-100 hover:bg-gray-200 transition-colors">Cancel</button>
-               <button onClick={confirmOrder} disabled={isProcessing} className="flex-1 py-2 rounded-lg font-bold text-white bg-[#007F2D] hover:bg-[#006e27] transition-colors flex justify-center items-center">
-                 {isProcessing ? 'Processing...' : 'Confirm'}
-               </button>
-             </div>
+            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center text-[#007F2D] text-3xl mx-auto mb-4">
+              🛒
+            </div>
+            <h2 className="text-xl font-bold text-gray-800 mb-2">Confirm Order?</h2>
+            <p className="text-gray-500 text-sm mb-6">Are you sure you want to place the order with Cash on Delivery? Total: <strong className="text-gray-900">₹{grandTotal.toFixed(2)}</strong></p>
+            <div className="flex gap-3">
+              <button onClick={() => setShowConfirmModal(false)} className="flex-1 py-2 rounded-lg font-bold text-gray-500 bg-gray-100 hover:bg-gray-200 transition-colors">Cancel</button>
+              <button onClick={confirmOrder} disabled={isProcessing} className="flex-1 py-2 rounded-lg font-bold text-white bg-[#007F2D] hover:bg-[#006e27] transition-colors flex justify-center items-center">
+                {isProcessing ? 'Processing...' : 'Confirm'}
+              </button>
+            </div>
           </div>
         </div>
       )}
