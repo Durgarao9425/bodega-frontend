@@ -39,6 +39,7 @@ const AppRoutes: React.FC = () => {
             <Route path="/" element={<DashboardPage />} />
             <Route path="/products" element={<ProductsPage />} />
             <Route path="/category/:categoryName" element={<ProductsPage />} />
+            <Route path="/category/:categoryName/subcategories" element={<SubcategoriesPage />} />
             <Route path="/subcategories" element={<SubcategoriesPage />} />
             <Route path="/products/:id" element={<ProductDetailPage />} />
 
