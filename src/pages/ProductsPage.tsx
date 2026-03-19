@@ -14,14 +14,31 @@ const ProductCardSkeleton = () => (
   <div className="bg-gray-100 animate-pulse rounded-xl border border-gray-100 min-h-[280px] sm:min-h-[320px]" />
 );
 
-// Category structure (matches backend seed data)
+// Category structure — subcategory names match EXACT values in MongoDB
 const CATEGORY_STRUCTURE: Record<string, string[]> = {
   'All': [],
-  'Households': ['Detergents & Cleaning', 'Pooja items'],
-  'Fruits & Vegetables': ['Vegetables', 'Fruits'],
-  'Groceries': ['Aata, maida, besan & sooji', 'Dals, Pulses & Grains', 'Masala & Spices', 'Oil & Ghee', 'Rice, Poha & Sabhudana'],
+  'Households': [
+    'Breakfast & cereals',
+    'Detergents & Cleaning',
+    'Facewash & skincare',
+    'Hair care',
+    'Oral care',
+    'Pasta & noodles',
+    'Soaps & body wash',
+  ],
+  'Fruits & Vegetables': ['Vegetables', 'Fruits', 'Fresh Fruits'],
+  'Groceries': [
+    'Aata, maida, besan & sooji',
+    'Dals, Pulses & Grains',
+    'Masala & Spices',
+    'Oil & Ghee',
+    'Rice, Poha & Sabhudana',
+  ],
+  'Dairy & Eggs': ['Milk', 'Butter & Cheese', 'Eggs'],
+  'Beverages': ['Cold Drinks', 'Juices'],
+  'Bakery': ['Bread', 'Biscuits'],
   'Dry Fruits': ['Premium Nuts'],
-  'Testing cat': [],
+  'Testing cat': ['Other Items'],
 };
 
 const MAIN_CATEGORIES = Object.keys(CATEGORY_STRUCTURE);
@@ -36,27 +53,31 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ isWishlist }) => {
   const { categoryName } = useParams();
   const { wishlistItems } = useWishlist();
 
-  // Get URL search params
+  // Get URL search params — derived directly from location for reactivity
   const searchParams = new URLSearchParams(location.search);
   const searchQuery = searchParams.get('search') || '';
-  const initSub = searchParams.get('subcategory') || '';
+  // Read subcategory directly (decoded) from URL — this is reactive to navigation
+  const urlSubcategory = searchParams.get('subcategory') || '';
 
   // Filters state
-  const [activeCategory, setActiveCategory] = useState<string>('Households');
-  const [activeSubcategory, setActiveSubcategory] = useState<string>(initSub);
+  const [activeCategory, setActiveCategory] = useState<string>(() =>
+    categoryName ? decodeURIComponent(categoryName) : 'Households'
+  );
+  const [activeSubcategory, setActiveSubcategory] = useState<string>(urlSubcategory);
   const [priceRange, setPriceRange] = useState<number>(10000);
   const [sortBy, setSortBy] = useState<string>('default');
 
-  // Handle URL-driven category
+  // Handle URL-driven category + subcategory — runs on every navigation
   useEffect(() => {
     if (categoryName) {
       setActiveCategory(decodeURIComponent(categoryName));
-      setActiveSubcategory(initSub ? decodeURIComponent(initSub) : '');
     } else if (!searchQuery) {
       setActiveCategory('Households');
     }
+    // Always sync subcategory from URL (handles both initial load and navigation)
+    setActiveSubcategory(urlSubcategory);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [categoryName, initSub]);
+  }, [categoryName, location.search]);
 
   // Fetch ALL products once and cache
   useEffect(() => {
@@ -96,7 +117,11 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ isWishlist }) => {
         filtered = filtered.filter(p => p.category === activeCategory);
       }
       if (activeSubcategory) {
-        filtered = filtered.filter(p => p.subcategory === activeSubcategory);
+        filtered = filtered.filter(p => {
+          const productSub = (p.subcategory || '').toLowerCase().trim();
+          const filterSub = activeSubcategory.toLowerCase().trim();
+          return productSub === filterSub;
+        });
       }
     }
 
@@ -181,11 +206,10 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ isWishlist }) => {
                     <button
                       key={cat}
                       onClick={() => handleCategoryClick(cat)}
-                      className={`w-full text-left text-xs font-medium py-2 px-3 rounded-lg transition-colors ${
-                        activeCategory === cat
+                      className={`w-full text-left text-xs font-medium py-2 px-3 rounded-lg transition-colors ${activeCategory === cat
                           ? 'bg-[#007F2D] text-white font-bold'
                           : 'text-gray-600 hover:bg-green-50 hover:text-[#007F2D]'
-                      }`}
+                        }`}
                     >
                       {cat}
                     </button>

@@ -41,7 +41,44 @@ const HERO_CATEGORIES = [
   },
 ];
 
-
+const SECTIONS = [
+  {
+    title: 'Groceries',
+    items: [
+      { name: 'Aata, maida, besan & sooji', img: 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?q=80&w=500&h=400&fit=crop' },
+      { name: 'Dals, Pulses & Grains', img: 'https://images.unsplash.com/photo-1515543237350-b3eea1ec8082?q=80&w=500&h=400&fit=crop' },
+      { name: 'Masala & Spices', img: 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?q=80&w=500&h=400&fit=crop' },
+      { name: 'Oil & Ghee', img: 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?q=80&w=500&h=400&fit=crop' },
+      { name: 'Rice, Poha & Sabhudana', img: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?q=80&w=500&h=400&fit=crop' },
+    ],
+  },
+  {
+    title: 'Households',
+    items: [
+      { name: 'Breakfast & cereals', img: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?q=80&w=500&h=400&fit=crop' },
+      { name: 'Detergents & Cleaning', img: 'https://images.unsplash.com/photo-1585771724684-38269d6639fd?q=80&w=500&h=400&fit=crop' },
+      { name: 'Facewash & skincare', img: 'https://images.unsplash.com/photo-1556228578-0d85b1a4d571?q=80&w=500&h=400&fit=crop' },
+      { name: 'Hair care', img: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?q=80&w=500&h=400&fit=crop' },
+      { name: 'Oral care', img: 'https://images.unsplash.com/photo-1607613009820-a29f7bb81c04?q=80&w=500&h=400&fit=crop' },
+      { name: 'Pasta & noodles', img: 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?q=80&w=500&h=400&fit=crop' },
+      { name: 'Soaps & body wash', img: 'https://images.unsplash.com/photo-1600857062241-98e5dba7f214?q=80&w=500&h=400&fit=crop' },
+    ]
+  },
+  {
+    title: 'Fruits & Vegetables',
+    items: [
+      { name: 'Fruits', img: 'https://images.unsplash.com/photo-1610832958506-aa56368176cf?q=80&w=500&h=400&fit=crop' },
+      { name: 'Vegetables', img: 'https://images.unsplash.com/photo-1566385101042-1a0aa0c1268c?q=80&w=500&h=400&fit=crop' },
+      { name: 'Fresh Fruits', img: 'https://images.unsplash.com/photo-1457296898342-cdd24585d095?q=80&w=500&h=400&fit=crop' },
+    ]
+  },
+  {
+    title: 'Testing cat',
+    items: [
+      { name: 'Other Items', img: 'https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?q=80&w=500&h=400&fit=crop' }
+    ]
+  }
+];
 
 const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
@@ -54,7 +91,7 @@ const DashboardPage: React.FC = () => {
   useEffect(() => {
     api.get('/products')
       .then(r => setFeaturedProducts(r.data.products || []))
-      .catch(() => {})
+      .catch(() => { })
       .finally(() => setIsLoading(false));
   }, []);
 
@@ -126,7 +163,7 @@ const DashboardPage: React.FC = () => {
         <div className="absolute bottom-0 left-1/3 w-48 h-48 bg-yellow-400/10 rounded-full blur-2xl pointer-events-none" />
       </section>
 
-      <main className="max-w-[1400px] mx-auto px-3 sm:px-4 md:px-8 py-8">
+      <main className="max-w-[1600px] ml-0 px-4 sm:px-6 md:px-10 py-8">
 
         {/* ── HERO CATEGORY CARDS (scroll) ── */}
         <section className="mb-12">
@@ -162,112 +199,76 @@ const DashboardPage: React.FC = () => {
           </div>
         </section>
 
-        {/* ── SHOP BY CATEGORY — image tiles, full width ── */}
+        {/* ── SHOP BY CATEGORIES (Matches Reference) ── */}
         <section className="mb-12">
-          <div className="flex items-center justify-between mb-5">
-            <h2 className="text-xl sm:text-2xl font-bold text-[#007F2D]">Shop by categories</h2>
-            <button
-              onClick={() => navigate('/subcategories')}
-              className="text-[#007F2D] text-sm font-bold hover:underline"
-            >
-              View All →
-            </button>
-          </div>
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#007F2D] text-left mb-8">
+            Shop by categories
+          </h1>
 
-          {/* 7-column on large, 4 on tablet, 4 on mobile — images fill the whole width */}
-          <div className="grid grid-cols-4 sm:grid-cols-4 md:grid-cols-7 lg:grid-cols-7 gap-3 sm:gap-5">
-            {[
-              { name: 'Households',          path: '/category/Households',          img: 'https://images.unsplash.com/photo-1563453392212-326f5e854473?auto=format&fit=crop&q=80&w=300&h=300' },
-              { name: 'Fruits & Vegetables', path: '/category/Fruits & Vegetables', img: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&q=80&w=300&h=300' },
-              { name: 'Groceries',           path: '/category/Groceries',           img: 'https://images.unsplash.com/photo-1578916171728-46686eac8d58?auto=format&fit=crop&q=80&w=300&h=300' },
-              { name: 'Dry Fruits',          path: '/category/Dry Fruits',          img: 'https://images.unsplash.com/photo-1599599810769-bcde5a160d32?auto=format&fit=crop&q=80&w=300&h=300' },
-              { name: 'Dairy & Eggs',        path: '/category/Dairy & Eggs',        img: 'https://images.unsplash.com/photo-1628088062854-d1870b4553da?auto=format&fit=crop&q=80&w=300&h=300' },
-              { name: 'Beverages',           path: '/category/Beverages',           img: 'https://images.unsplash.com/photo-1595981234058-a9302fb97229?auto=format&fit=crop&q=80&w=300&h=300' },
-              { name: 'Personal Care',       path: '/category/Personal Care',       img: 'https://images.unsplash.com/photo-1556228453-efd6c1ff04f6?auto=format&fit=crop&q=80&w=300&h=300' },
-              { name: 'Baby Care',           path: '/category/Baby Care',           img: 'https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?auto=format&fit=crop&q=80&w=300&h=300' },
-              { name: 'Masala & Spices',     path: '/category/Groceries?subcategory=Masala %26 Spices', img: 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&q=80&w=300&h=300' },
-              { name: 'Oils & Ghee',         path: '/category/Groceries?subcategory=Oil %26 Ghee', img: 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&q=80&w=300&h=300' },
-              { name: 'Bakery',              path: '/category/Bakery',              img: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&q=80&w=300&h=300' },
-              { name: 'Testing cat',         path: '/category/Testing cat',         img: 'https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?auto=format&fit=crop&q=80&w=300&h=300' },
-            ].map(cat => (
-              <div
-                key={cat.name}
-                onClick={() => navigate(cat.path)}
-                className="flex flex-col items-center group cursor-pointer"
-              >
-                {/* Square rounded image tile */}
-                <div className="w-full aspect-square rounded-[28px] sm:rounded-[35px] overflow-hidden bg-gray-50 mb-2 shadow-[0_4px_12px_rgba(0,0,0,0.06)] border border-gray-100 p-1.5">
-                  <div className="w-full h-full rounded-[22px] sm:rounded-[28px] overflow-hidden">
-                    <img
-                      src={cat.img}
-                      alt={cat.name}
-                      loading="lazy"
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                      onError={e => {
-                        const t = e.target as HTMLImageElement;
-                        t.onerror = null;
-                        t.src = `https://placehold.co/200x200/f0fdf4/007F2D?text=${encodeURIComponent(cat.name.slice(0, 8))}`;
-                      }}
-                    />
-                  </div>
-                </div>
-                <span className="text-[9px] sm:text-[11px] md:text-xs font-bold text-gray-700 text-center line-clamp-2 leading-tight">
-                  {cat.name}
-                </span>
+          {SECTIONS.map(section => (
+            <div key={section.title} className="mb-10">
+              {/* Added bottom border and distinct coloring to match references */}
+              <div className="flex items-center justify-between mb-4 border-b border-gray-100 pb-2">
+                <h2 className="text-base sm:text-lg font-bold text-[#007F2D]">{section.title}</h2>
+                <button
+                  onClick={() => navigate(`/category/${encodeURIComponent(section.title)}/subcategories`)}
+                  className="text-[#007F2D] text-[10px] sm:text-xs font-bold hover:underline"
+                >
+                  View More
+                </button>
               </div>
-            ))}
-          </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6">
+                {section.items.slice(0, 4).map(item => (
+                  <div
+                    key={item.name}
+                    onClick={() => navigate(`/category/${encodeURIComponent(section.title)}?subcategory=${encodeURIComponent(item.name)}`)}
+                    className="flex flex-col bg-white border border-gray-100 rounded-lg sm:rounded-xl overflow-hidden shadow-sm cursor-pointer hover:shadow-md transition-shadow group"
+                  >
+                    <div className="aspect-[4/3] w-full overflow-hidden bg-gray-50 border-b border-gray-50">
+                      <img
+                        src={item.img}
+                        alt={item.name}
+                        loading="lazy"
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        onError={e => {
+                          const t = e.target as HTMLImageElement;
+                          t.onerror = null;
+                          t.src = `https://placehold.co/400x300/f0fdf4/007F2D?text=${encodeURIComponent(item.name.slice(0, 10))}`;
+                        }}
+                      />
+                    </div>
+                    <div className="p-2 sm:p-4 flex items-center justify-center bg-white min-h-[50px]">
+                      <span className="text-[10px] sm:text-xs font-bold text-gray-800 text-center leading-tight">
+                        {item.name}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+
+
+              </div>
+            </div>
+          ))}
         </section>
 
 
-        {/* ── CATEGORY PRODUCT SECTIONS ── */}
-        {['Households', 'Groceries', 'Dairy & Eggs'].map(catTarget => {
-          const catProducts = featuredProducts.filter(p => p.category === catTarget);
-          if (catProducts.length === 0) return null;
-
-          return (
-            <section key={catTarget} className="mb-10">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-base sm:text-lg font-extrabold text-[#007F2D]">{catTarget}</h2>
-                <button
-                  onClick={() => navigate(`/category/${catTarget}`)}
-                  className="text-[#007F2D] text-xs font-bold border border-[#007F2D] px-3 py-1 rounded-full hover:bg-[#007F2D] hover:text-white transition-colors"
-                >
-                  View All
-                </button>
-              </div>
-              <div className="flex gap-4 sm:gap-5 overflow-x-auto pb-4 no-scrollbar">
-                {catProducts.map(p => (
-                  <div key={p._id} className="w-40 sm:w-48 md:w-56 shrink-0">
-                    <ProductCard
-                      product={p}
-                      onRequestLogin={() => setShowLoginModal(true)}
-                    />
-                  </div>
-                ))}
-              </div>
-            </section>
-          );
-        })}
-
-
-        {/* ── TRENDING PRODUCTS (working carousel) ── */}
+        {/* ── TRENDINGS (working carousel) ── */}
         <section className="mb-12">
           <div className="flex justify-between items-center mb-5">
             <div>
-              <h2 className="text-xl sm:text-2xl font-extrabold text-gray-800">🔥 Trending Products</h2>
-              <p className="text-xs text-gray-400 mt-0.5">Most ordered this week</p>
+              <h2 className="text-xl sm:text-2xl font-semibold text-gray-700">Trendings</h2>
             </div>
             <div className="flex gap-2">
               <button
                 onClick={() => scrollCarousel('left')}
-                className="w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-gray-200 bg-white flex items-center justify-center text-gray-500 hover:bg-[#007F2D] hover:text-white hover:border-[#007F2D] transition-all shadow-sm"
+                className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-gray-200 bg-white flex items-center justify-center text-gray-500 hover:bg-[#007F2D] hover:text-white hover:border-[#007F2D] transition-all shadow-sm"
               >
                 ‹
               </button>
               <button
                 onClick={() => scrollCarousel('right')}
-                className="w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-gray-200 bg-white flex items-center justify-center text-gray-500 hover:bg-[#007F2D] hover:text-white hover:border-[#007F2D] transition-all shadow-sm"
+                className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-gray-200 bg-white flex items-center justify-center text-gray-500 hover:bg-[#007F2D] hover:text-white hover:border-[#007F2D] transition-all shadow-sm"
               >
                 ›
               </button>
@@ -276,20 +277,34 @@ const DashboardPage: React.FC = () => {
 
           {isLoading ? (
             <div className="flex gap-4 overflow-x-hidden">
-              {[1,2,3,4,5].map(n => (
-                <div key={n} className="w-48 sm:w-56 h-[280px] bg-gray-100 animate-pulse rounded-xl shrink-0" />
+              {[1, 2, 3, 4, 5].map(n => (
+                <div key={n} className="w-48 sm:w-52 h-[280px] bg-gray-100 animate-pulse rounded-xl shrink-0" />
               ))}
             </div>
           ) : (
-            <div ref={carouselRef} className="flex gap-4 overflow-x-auto no-scrollbar">
-              {featuredProducts.map(p => (
-                <div key={p._id} className="w-48 sm:w-56 md:w-64 shrink-0">
-                  <ProductCard
-                    product={p}
-                    onRequestLogin={() => setShowLoginModal(true)}
-                  />
-                </div>
-              ))}
+            <div ref={carouselRef} className="flex gap-4 overflow-x-auto no-scrollbar pb-2">
+              {featuredProducts
+                .filter(p => ![
+                  // Products excluded from Trending by user request
+                  'Sunflower Oil 1L', 'Garam Masala 100g', 'Coriander Powder 200g',
+                  'Rajma (Kidney Beans) 500g', 'Maida (Refined Flour) 1kg',
+                  'Sabhudana (Sago) 500g', 'Sona Masoori Rice 5kg', 'Brass Diya',
+                  'Pomegranate', 'Tomatoes', 'Green Capsicum', 'Fresh Potatoes',
+                  'CloseUp Red Hot', 'Listerine Mouthwash 250ml', 'Sensodyne Repair',
+                  'Nivea Body Milk 400ml', 'Gillette Mach 3 Razor', 'Ponds White Beauty Cream 50g',
+                  'Chocos 250g', 'Muesli 400g', "Kellogg's Corn Flakes 500g",
+                  'Farm Fresh Brown Eggs (Pack of 6)', 'Chana Dal 1kg', 'Pooja Thali Set',
+                  'Bourbon', 'Parle-G 800g', 'Sugar', 'Pure White Sugar',
+                ].includes(p.name))
+                .map(p => (
+                  <div key={p._id} className="w-44 sm:w-48 md:w-56 shrink-0">
+                    <ProductCard
+                      product={p}
+                      onRequestLogin={() => setShowLoginModal(true)}
+                    />
+                  </div>
+                ))
+              }
             </div>
           )}
         </section>
@@ -333,8 +348,8 @@ const DashboardPage: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {[
               { icon: '💰', bg: 'bg-green-50', title: 'Best Prices & Deals', desc: "Don't miss our daily amazing deals and prices" },
-              { icon: '🔄', bg: 'bg-blue-50',  title: 'Refundable',          desc: 'If your items have issues, we refund easily' },
-              { icon: '🚚', bg: 'bg-orange-50', title: 'Free Delivery',       desc: 'On orders above ₹499 in specific areas' },
+              { icon: '🔄', bg: 'bg-blue-50', title: 'Refundable', desc: 'If your items have issues, we refund easily' },
+              { icon: '🚚', bg: 'bg-orange-50', title: 'Free Delivery', desc: 'On orders above ₹499 in specific areas' },
             ].map(s => (
               <div key={s.title} className="flex items-center gap-4 bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
                 <div className={`w-12 h-12 ${s.bg} rounded-xl flex items-center justify-center text-2xl shrink-0`}>{s.icon}</div>
