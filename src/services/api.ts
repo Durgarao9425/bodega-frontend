@@ -2,19 +2,22 @@ import axios from 'axios';
 
 // Determine the base URL for the API
 const getBaseURL = () => {
-  // Priority 1: Environment variable
+  // Use Vercel specific logic to ensure the production backend is used when live
+  const isProduction = window.location.hostname !== 'localhost';
+  
+  // Priority 1: Environment variable (if explicitly set)
   let url = (import.meta as any).env?.VITE_API_URL;
   
-  // Priority 2: Fallback based on environment
+  // Priority 2: Fallback based on domain
   if (!url) {
-    url = window.location.hostname === 'localhost' 
-      ? 'http://localhost:5000' 
-      : 'https://bodega-backend-g49y.onrender.com';
+    url = isProduction 
+      ? 'https://bodega-backend-g49y.onrender.com' 
+      : 'http://localhost:5000';
   }
 
-  // Ensure the URL always ends with /api for consistency
-  // This prevents 404 errors if the env var is missing the suffix
-  return url.endsWith('/api') ? url : `${url}/api`;
+  // Final Clean: Remove trailing slash if present, then ensure it ends with /api
+  const cleanUrl = url.endsWith('/') ? url.slice(0, -1) : url;
+  return cleanUrl.endsWith('/api') ? cleanUrl : `${cleanUrl}/api`;
 };
 
 const api = axios.create({
