@@ -152,14 +152,7 @@ const OTPPage: React.FC = () => {
             <p className="font-semibold text-gray-800">+91 {phone}</p>
           </div>
 
-          {/* Demo OTP Notice - only in development */}
-          {demoOtp && (
-            <div className="bg-blue-50 border border-blue-200 rounded-xl p-3 mb-4 text-center">
-              <p className="text-xs text-blue-600 font-medium">🧪 Demo Mode</p>
-              <p className="text-sm text-blue-800 font-bold mt-1">Your OTP: {demoOtp}</p>
-              <p className="text-xs text-blue-500">(In production, this would be sent via SMS)</p>
-            </div>
-          )}
+
 
           <form onSubmit={handleVerify} className="space-y-6">
             {/* OTP Input Boxes */}

@@ -3,16 +3,14 @@ import axios from 'axios';
 // Determine the base URL for the API
 const getBaseURL = () => {
   // Use Vercel specific logic to ensure the production backend is used when live
-  const isProduction = window.location.hostname !== 'localhost';
+  const isProduction = true;
   
   // Priority 1: Environment variable (if explicitly set)
   let url = (import.meta as any).env?.VITE_API_URL;
   
-  // Priority 2: Fallback based on domain
+  // Fallback to production backend URL
   if (!url) {
-    url = isProduction 
-      ? 'https://bodega-backend-g49y.onrender.com' 
-      : 'http://localhost:5000';
+    url = 'https://bodega-backend-g49y.onrender.com';
   }
 
   // Final Clean: Remove trailing slash if present, then ensure it ends with /api
