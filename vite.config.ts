@@ -9,7 +9,7 @@ export default defineConfig({
     // Proxy API requests to our backend server
     proxy: {
       '/api': {
-        target: 'https://bodega-backend-g49y.onrender.com',
+        target: 'http://localhost:5000',
         changeOrigin: true,
       },
     },
