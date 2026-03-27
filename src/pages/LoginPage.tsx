@@ -142,7 +142,7 @@ const LoginPage: React.FC = () => {
                 {isLoading ? (
                   <span className="flex items-center justify-center gap-3">
                     <div className="w-5 h-5 border-3 border-white border-t-transparent rounded-full animate-spin"></div>
-                    Verifying...
+                    Just a second...
                   </span>
                 ) : (
                   <span className="flex items-center justify-center gap-2">
@@ -151,6 +151,12 @@ const LoginPage: React.FC = () => {
                 )}
               </button>
             </form>
+
+            <div className="mt-4 text-center">
+               <p className="text-[10px] text-gray-400 font-medium flex items-center justify-center gap-1">
+                 <span className="text-primary-500">🔒</span> Secure 256-bit encryption
+               </p>
+            </div>
 
             <p className="text-center text-xs text-gray-400 mt-6">
               By continuing, you agree to our Terms of Service & Privacy Policy

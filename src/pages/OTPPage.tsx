@@ -140,6 +140,25 @@ const OTPPage: React.FC = () => {
           ← Back to Login
         </button>
 
+        {/* Demo OTP Banner (Visible in top as requested) */}
+        {demoOtp && (
+          <div className="bg-primary-50 border border-primary-100 text-primary-700 text-sm px-4 py-3 rounded-xl mb-6 flex items-center justify-between shadow-sm animate-pulse-subtle">
+            <span className="flex items-center gap-2">
+              <span className="text-xl">✨</span>
+              Demo OTP: <strong className="text-lg tracking-widest">{demoOtp}</strong>
+            </span>
+            <span className="text-[10px] uppercase font-bold text-primary-400 bg-white px-2 py-1 rounded-lg">Copy this</span>
+          </div>
+        )}
+
+        {/* Success Banner (When verified) */}
+        {isLoading && !error && otpDigits.join('').length === 6 && (
+          <div className="bg-green-50 border border-green-100 text-green-700 text-sm px-4 py-3 rounded-xl mb-6 flex items-center gap-3 shadow-sm scale-up-center">
+             <div className="w-5 h-5 border-2 border-green-500 border-t-transparent rounded-full animate-spin"></div>
+             <span>Verifying your secure access...</span>
+          </div>
+        )}
+
         {/* Card */}
         <div className="bg-white rounded-2xl shadow-lg p-8">
           {/* Icon */}
