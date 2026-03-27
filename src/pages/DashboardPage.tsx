@@ -102,7 +102,7 @@ const DashboardPage: React.FC = () => {
   return (
     <div className="bg-[#f8f9fa]">
       {/* ── HERO BANNER ── */}
-      <section className="bg-[#007F2D] md:bg-[#007F2D] relative overflow-hidden">
+      <section className="bg-primary-500 md:bg-primary-500 relative overflow-hidden">
         {/* Mobile-only Hero Image (Yellow background style) */}
         <div className="md:hidden w-full h-[220px] bg-[#FFD700] relative flex items-center justify-center overflow-hidden">
           <img
@@ -132,7 +132,7 @@ const DashboardPage: React.FC = () => {
             <div className="flex gap-3 justify-start flex-wrap">
               <button
                 onClick={() => navigate('/products')}
-                className="bg-white text-[#007F2D] font-extrabold px-7 py-3 rounded-xl hover:bg-yellow-300 transition-all shadow-lg text-sm"
+                className="bg-white text-primary-500 font-extrabold px-7 py-3 rounded-xl hover:bg-yellow-300 transition-all shadow-lg text-sm"
               >
                 Shop Now →
               </button>
@@ -205,7 +205,7 @@ const DashboardPage: React.FC = () => {
 
         {/* ── SHOP BY CATEGORIES (Matches Reference) ── */}
         <section className="mb-12">
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#007F2D] text-left mb-8">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-primary-500 text-left mb-8">
             Shop by categories
           </h1>
 
@@ -236,10 +236,10 @@ const DashboardPage: React.FC = () => {
               <div key={section.title} className="mb-10">
                 {/* Added bottom border and distinct coloring to match references */}
                 <div className="flex items-center justify-between mb-4 border-b border-gray-100 pb-2">
-                  <h2 className="text-base sm:text-lg font-bold text-[#007F2D]">{section.title}</h2>
+                  <h2 className="text-base sm:text-lg font-bold text-primary-500">{section.title}</h2>
                   <button
                     onClick={() => navigate(`/category/${encodeURIComponent(section.title)}/subcategories`)}
-                    className="text-[#007F2D] text-[10px] sm:text-xs font-bold hover:underline"
+                    className="text-primary-500 text-[10px] sm:text-xs font-bold hover:underline"
                   >
                     View More
                   </button>
@@ -288,13 +288,13 @@ const DashboardPage: React.FC = () => {
             <div className="flex gap-2">
               <button
                 onClick={() => scrollCarousel('left')}
-                className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-gray-200 bg-white flex items-center justify-center text-gray-500 hover:bg-[#007F2D] hover:text-white hover:border-[#007F2D] transition-all shadow-sm"
+                className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-gray-200 bg-white flex items-center justify-center text-gray-500 hover:bg-primary-500 hover:text-white hover:border-primary-500 transition-all shadow-sm"
               >
                 ‹
               </button>
               <button
                 onClick={() => scrollCarousel('right')}
-                className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-gray-200 bg-white flex items-center justify-center text-gray-500 hover:bg-[#007F2D] hover:text-white hover:border-[#007F2D] transition-all shadow-sm"
+                className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-gray-200 bg-white flex items-center justify-center text-gray-500 hover:bg-primary-500 hover:text-white hover:border-primary-500 transition-all shadow-sm"
               >
                 ›
               </button>
@@ -343,11 +343,11 @@ const DashboardPage: React.FC = () => {
 
         {/* ── APP PROMO BANNER (matches reference) ── */}
         <section className="mb-12">
-          <div className="bg-[#007F2D] rounded-2xl sm:rounded-3xl overflow-hidden relative">
+          <div className="bg-primary-500 rounded-2xl sm:rounded-3xl overflow-hidden relative">
             <div className="flex flex-col md:flex-row items-center justify-between px-8 py-10 gap-8">
               <div className="text-white z-10 text-center md:text-left">
                 <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-2">
-                  Shop Faster With<br />bodegaa App
+                  Shop Faster With<br />StoreWave App
                 </h2>
                 <p className="text-green-100 text-sm mb-6">Available on both iOS & Android</p>
                 <div className="flex gap-4 justify-center md:justify-start">

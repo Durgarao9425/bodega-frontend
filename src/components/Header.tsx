@@ -114,7 +114,7 @@ const Header: React.FC = () => {
 
   return (
     <>
-      <header className="bg-[#007F2D] text-white sticky top-0 z-50 w-full shadow-md">
+      <header className="bg-primary-500 text-white sticky top-0 z-50 w-full shadow-md">
 
         {/* ── Main Nav Row ── */}
         <div className="w-full px-3 sm:px-4 md:px-8 py-2.5 flex items-center justify-between gap-3">
@@ -133,10 +133,10 @@ const Header: React.FC = () => {
           {/* Brand Name / Logo (Mobile: Left-aligned, Desktop: Left) */}
           <Link to="/" className="flex flex-col shrink-0 group order-2 md:order-1" onClick={() => setMobileMenuOpen(false)}>
             <div className="flex items-center">
-              <span className="text-orange-500 font-extrabold text-2xl sm:text-3xl leading-none">B</span>
-              <span className="text-white font-bold text-2xl sm:text-3xl leading-none tracking-tight">odegaa</span>
+              <span className="text-orange-500 font-extrabold text-2xl sm:text-3xl leading-none">S</span>
+              <span className="text-white font-bold text-2xl sm:text-3xl leading-none tracking-tight">toreWave</span>
             </div>
-            <span className="text-[8px] uppercase tracking-widest text-[#a7f3d0] font-bold hidden sm:block">BEST IN QUALITY</span>
+            <span className="text-[8px] uppercase tracking-widest text-blue-100 font-bold hidden sm:block">BEST IN QUALITY</span>
           </Link>
 
           {/* Desktop Search (Hidden on Mobile) */}
@@ -176,7 +176,7 @@ const Header: React.FC = () => {
                   <path d="M20.8 4.6a5.5 5.5 0 00-7.7 0L12 5.7l-1.1-1.1a5.5 5.5 0 00-7.8 7.8l1.1 1.1L12 21l7.8-7.8 1.1-1.1a5.5 5.5 0 000-7.7z" />
                 </svg>
                 {wishlistCount > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[9px] w-4 h-4 rounded-full flex items-center justify-center font-bold border border-[#007F2D]">
+                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[9px] w-4 h-4 rounded-full flex items-center justify-center font-bold border border-[#0ea5e9]">
                     {wishlistCount > 9 ? '9+' : wishlistCount}
                   </span>
                 )}
@@ -192,7 +192,7 @@ const Header: React.FC = () => {
                   <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
                 </svg>
                 {cartCount > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[9px] w-4 h-4 rounded-full flex items-center justify-center font-bold border border-[#007F2D]">
+                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[9px] w-4 h-4 rounded-full flex items-center justify-center font-bold border border-[#0ea5e9]">
                     {cartCount > 9 ? '9+' : cartCount}
                   </span>
                 )}
@@ -256,7 +256,7 @@ const Header: React.FC = () => {
         </div>
 
         {/* ── Mobile Search Bar ── */}
-        <div className="md:hidden bg-[#006e27] px-3 pb-2 pt-1 border-t border-green-900/20">
+        <div className="md:hidden bg-primary-600 px-3 pb-2 pt-1 border-t border-blue-900/10">
           <form onSubmit={handleSearch} className="flex bg-white rounded-lg overflow-hidden h-9 shadow-sm">
             <select
               value={searchCategory}
@@ -296,11 +296,11 @@ const Header: React.FC = () => {
           {/* Drawer panel */}
           <div className="relative w-72 bg-white h-full flex flex-col shadow-2xl animate-slide-right overflow-y-auto">
             {/* Drawer header */}
-            <div className="bg-[#007F2D] text-white p-4 flex items-center justify-between">
+            <div className="bg-primary-500 text-white p-4 flex items-center justify-between">
               <div>
                 <div className="flex items-center">
-                  <span className="text-orange-500 font-extrabold text-2xl leading-none">B</span>
-                  <span className="text-white font-bold text-2xl leading-none">odegaa</span>
+                  <span className="text-orange-500 font-extrabold text-2xl leading-none">S</span>
+                  <span className="text-white font-bold text-2xl leading-none">toreWave</span>
                 </div>
                 {user && <p className="text-[10px] text-green-200 mt-0.5">Hello, {displayName}!</p>}
               </div>
@@ -315,7 +315,7 @@ const Header: React.FC = () => {
             {/* User block (if logged in) */}
             {user && (
               <div className="px-4 py-3 bg-green-50 border-b border-gray-100 flex items-center gap-3">
-                <div className="w-10 h-10 bg-[#007F2D] rounded-full flex items-center justify-center text-white font-bold text-lg">
+                <div className="w-10 h-10 bg-primary-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
                   {user.name?.trim() ? user.name.charAt(0).toUpperCase() : user.phone.slice(-2)}
                 </div>
                 <div>
@@ -339,12 +339,12 @@ const Header: React.FC = () => {
                   key={item.path}
                   to={item.path}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold text-gray-700 hover:bg-green-50 hover:text-[#007F2D] transition-colors"
+                  className="flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold text-gray-700 hover:bg-green-50 hover:text-[#0ea5e9] transition-colors"
                 >
                   <span className="text-lg w-6 text-center">{item.icon}</span>
                   <span className="flex-1">{item.label}</span>
                   {item.badge && item.badge > 0 && (
-                    <span className="bg-[#007F2D] text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center">
+                    <span className="bg-[#0ea5e9] text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center">
                       {item.badge}
                     </span>
                   )}
@@ -358,9 +358,9 @@ const Header: React.FC = () => {
                     key={cat.name}
                     to={cat.path}
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-green-50 hover:text-[#007F2D] transition-colors"
+                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-green-50 hover:text-[#0ea5e9] transition-colors"
                   >
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#007F2D] shrink-0" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#0ea5e9] shrink-0" />
                     {cat.name}
                   </Link>
                 ))}
@@ -380,7 +380,7 @@ const Header: React.FC = () => {
                 <Link
                   to="/login"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="w-full flex items-center justify-center gap-2 bg-[#007F2D] text-white font-bold text-sm py-3 rounded-xl hover:bg-[#006e27] transition-colors"
+                  className="w-full flex items-center justify-center gap-2 bg-primary-500 text-white font-bold text-sm py-3 rounded-xl hover:bg-primary-600 transition-colors"
                 >
                   Login
                 </Link>

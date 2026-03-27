@@ -93,9 +93,9 @@ input[type="range"].price-slider::-webkit-slider-thumb {
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  background: #007F2D;
+  background: #0ea5e9;
   border: 3px solid white;
-  box-shadow: 0 0 0 1px #007F2D, 0 2px 6px rgba(0,127,45,0.4);
+  box-shadow: 0 0 0 1px #0ea5e9, 0 2px 6px rgba(14,165,233,0.4);
   cursor: pointer;
   transition: transform 0.15s;
 }
@@ -108,15 +108,15 @@ input[type="range"].price-slider::-moz-range-thumb {
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  background: #007F2D;
+  background: #0ea5e9;
   border: 3px solid white;
-  box-shadow: 0 0 0 1px #007F2D;
+  box-shadow: 0 0 0 1px #0ea5e9;
   cursor: pointer;
 }
 
 /* Filled portion — Firefox */
 input[type="range"].price-slider::-moz-range-progress {
-  background: #007F2D;
+  background: #0ea5e9;
   height: 4px;
   border-radius: 999px;
 }
@@ -135,7 +135,7 @@ img[src=""], img:not([src]) {
    Focus Styles
    ============================================= */
 :focus-visible {
-  outline: 2px solid #007F2D;
+  outline: 2px solid #0ea5e9;
   outline-offset: 2px;
 }
 

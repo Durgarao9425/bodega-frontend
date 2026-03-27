@@ -176,14 +176,14 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ isWishlist }) => {
         {/* Breadcrumb + Sort */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-5">
           <div className="flex items-center gap-2 text-sm text-gray-500">
-            <Link to="/" className="hover:text-[#007F2D] font-medium">Home</Link>
+            <Link to="/" className="hover:text-[#0ea5e9] font-medium">Home</Link>
             <span>›</span>
             {isWishlist ? (
-              <span className="text-[#007F2D] font-bold">My Wishlist ❤️</span>
+              <span className="text-[#0ea5e9] font-bold">My Wishlist ❤️</span>
             ) : searchQuery ? (
-              <span className="text-[#007F2D] font-bold">Search: "{searchQuery}"</span>
+              <span className="text-[#0ea5e9] font-bold">Search: "{searchQuery}"</span>
             ) : (
-              <span className="text-[#007F2D] font-bold">{activeCategory}</span>
+              <span className="text-[#0ea5e9] font-bold">{activeCategory}</span>
             )}
           </div>
 
@@ -192,7 +192,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ isWishlist }) => {
             <select
               value={sortBy}
               onChange={e => setSortBy(e.target.value)}
-              className="text-xs sm:text-sm border border-gray-200 rounded-lg px-3 py-2 text-gray-700 outline-none focus:border-[#007F2D] cursor-pointer bg-white self-start sm:self-auto"
+              className="text-xs sm:text-sm border border-gray-200 rounded-lg px-3 py-2 text-gray-700 outline-none focus:border-[#0ea5e9] cursor-pointer bg-white self-start sm:self-auto"
             >
               <option value="default">Sort: Relevance</option>
               <option value="price_asc">Price: Low → High</option>
@@ -217,8 +217,8 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ isWishlist }) => {
                       key={cat}
                       onClick={() => handleCategoryClick(cat)}
                       className={`w-full text-left text-xs font-medium py-2 px-3 rounded-lg transition-colors ${activeCategory === cat
-                          ? 'bg-[#007F2D] text-white font-bold'
-                          : 'text-gray-600 hover:bg-green-50 hover:text-[#007F2D]'
+                          ? 'bg-[#0ea5e9] text-white font-bold'
+                          : 'text-gray-600 hover:bg-green-50 hover:text-[#0ea5e9]'
                         }`}
                     >
                       {cat}
@@ -238,7 +238,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ isWishlist }) => {
                         name="subcategory"
                         checked={activeSubcategory === ''}
                         onChange={() => setActiveSubcategory('')}
-                        className="accent-[#007F2D]"
+                        className="accent-[#0ea5e9]"
                       />
                       <span className="text-xs font-medium text-gray-600 group-hover:text-gray-900">All</span>
                     </label>
@@ -249,9 +249,9 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ isWishlist }) => {
                           name="subcategory"
                           checked={activeSubcategory === sub}
                           onChange={() => setActiveSubcategory(sub)}
-                          className="accent-[#007F2D]"
+                          className="accent-[#0ea5e9]"
                         />
-                        <span className={`text-xs font-medium ${activeSubcategory === sub ? 'text-[#007F2D]' : 'text-gray-600 group-hover:text-gray-900'}`}>
+                        <span className={`text-xs font-medium ${activeSubcategory === sub ? 'text-[#0ea5e9]' : 'text-gray-600 group-hover:text-gray-900'}`}>
                           {sub}
                         </span>
                       </label>
@@ -265,10 +265,10 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ isWishlist }) => {
                 <div className="flex justify-between items-center mb-3">
                   <h3 className="font-bold text-gray-700 text-xs uppercase tracking-widest">Price Range</h3>
                   <div className="flex items-center gap-3">
-                    <span className="text-xs font-bold text-[#007F2D]">Up to ₹{priceRange}</span>
+                    <span className="text-xs font-bold text-[#0ea5e9]">Up to ₹{priceRange}</span>
                     <button
                       onClick={resetFilters}
-                      className="text-[9px] uppercase font-bold text-[#007F2D] border border-[#007F2D] px-2 py-0.5 rounded hover:bg-[#007F2D] hover:text-white transition-colors"
+                      className="text-[9px] uppercase font-bold text-[#0ea5e9] border border-[#0ea5e9] px-2 py-0.5 rounded hover:bg-[#0ea5e9] hover:text-white transition-colors"
                     >
                       Reset
                     </button>
@@ -285,12 +285,12 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ isWishlist }) => {
                   onChange={e => setPriceRange(parseInt(e.target.value))}
                   className="price-slider w-full mb-3"
                   style={{
-                    background: `linear-gradient(to right, #007F2D ${sliderFill}%, #d1d5db ${sliderFill}%)`
+                    background: `linear-gradient(to right, #0ea5e9 ${sliderFill}%, #d1d5db ${sliderFill}%)`
                   }}
                 />
                 <div className="flex items-center justify-between text-xs font-bold text-gray-700">
                   <span className="bg-gray-100 px-2 py-1 rounded">₹0</span>
-                  <span className="text-[#007F2D]">₹{priceRange.toLocaleString()}</span>
+                  <span className="text-[#0ea5e9]">₹{priceRange.toLocaleString()}</span>
                 </div>
               </div>
             </aside>
@@ -325,7 +325,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ isWishlist }) => {
                 </p>
                 <button
                   onClick={() => navigate('/products')}
-                  className="bg-[#007F2D] text-white px-6 py-2.5 rounded-xl font-bold shadow-md hover:bg-[#006e27] transition-colors text-sm"
+                  className="bg-[#0ea5e9] text-white px-6 py-2.5 rounded-xl font-bold shadow-md hover:bg-[#0284c7] transition-colors text-sm"
                 >
                   Browse All Products
                 </button>
@@ -347,7 +347,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ isWishlist }) => {
                   <div className="flex justify-center pt-4 pb-8">
                     <button
                       onClick={() => setVisibleItemsCount(prev => prev + 10)}
-                      className="group flex items-center gap-2 bg-white border-2 border-[#007F2D] text-[#007F2D] font-bold px-8 py-3 rounded-xl hover:bg-[#007F2D] hover:text-white transition-all duration-300 shadow-md hover:shadow-lg"
+                      className="group flex items-center gap-2 bg-white border-2 border-[#0ea5e9] text-[#0ea5e9] font-bold px-8 py-3 rounded-xl hover:bg-[#0ea5e9] hover:text-white transition-all duration-300 shadow-md hover:shadow-lg"
                     >
                       Load More
                       <svg 

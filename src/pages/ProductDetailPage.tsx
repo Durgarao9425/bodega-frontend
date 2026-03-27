@@ -96,7 +96,7 @@ const ProductDetailPage: React.FC = () => {
         <div className="flex-1 flex flex-col items-center justify-center py-20">
           <h2 className="text-2xl font-bold text-gray-800 mb-2">Oops!</h2>
           <p className="text-gray-500 mb-6">{error || 'Product not found'}</p>
-          <button onClick={() => navigate('/products')} className="bg-[#007F2D] text-white font-bold px-6 py-2 rounded-xl">← Back to Shop</button>
+          <button onClick={() => navigate('/products')} className="bg-[#0ea5e9] text-white font-bold px-6 py-2 rounded-xl">← Back to Shop</button>
         </div>
       </div>
     );
@@ -106,7 +106,7 @@ const ProductDetailPage: React.FC = () => {
     <div className="bg-white flex flex-col">
       <main className="max-w-[1200px] mx-auto px-4 py-6 flex-1 w-full">
         {/* Back Button */}
-        <button onClick={() => navigate(-1)} className="flex items-center gap-1 text-[#007F2D] font-bold text-sm hover:underline mb-6">
+        <button onClick={() => navigate(-1)} className="flex items-center gap-1 text-[#0ea5e9] font-bold text-sm hover:underline mb-6">
           ← Back
         </button>
 
@@ -168,10 +168,10 @@ const ProductDetailPage: React.FC = () => {
 
             {/* Thumbnails (Simulated) */}
             <div className="flex gap-3">
-              <div className="w-20 h-20 border-2 border-[#007F2D] rounded-lg p-2 cursor-pointer bg-white">
+              <div className="w-20 h-20 border-2 border-[#0ea5e9] rounded-lg p-2 cursor-pointer bg-white">
                 <img src={product.image || FALLBACK_IMAGE} className="w-full h-full object-contain" alt="thumb1" />
               </div>
-              <div className="w-20 h-20 border border-gray-200 rounded-lg p-2 cursor-pointer hover:border-[#007F2D] bg-white opacity-70 hover:opacity-100 transition-opacity">
+              <div className="w-20 h-20 border border-gray-200 rounded-lg p-2 cursor-pointer hover:border-[#0ea5e9] bg-white opacity-70 hover:opacity-100 transition-opacity">
                  {/* Reusing exact icon as a second thumb placeholder just like image 4 */}
                 <img src={product.image || FALLBACK_IMAGE} className="w-full h-full object-contain" alt="thumb2" />
               </div>
@@ -186,9 +186,9 @@ const ProductDetailPage: React.FC = () => {
             
             {/* Tags simulated based on name/category to match the mockup style */}
             <div className="flex gap-2 mb-6">
-              <span className="border border-green-200 text-[#007F2D] bg-green-50 text-[11px] font-bold px-3 py-1 rounded-full">{product.category.toLowerCase()}</span>
+              <span className="border border-green-200 text-[#0ea5e9] bg-green-50 text-[11px] font-bold px-3 py-1 rounded-full">{product.category.toLowerCase()}</span>
               {product.subcategory && (
-                <span className="border border-green-200 text-[#007F2D] bg-green-50 text-[11px] font-bold px-3 py-1 rounded-full">{product.subcategory.toLowerCase()}</span>
+                <span className="border border-green-200 text-[#0ea5e9] bg-green-50 text-[11px] font-bold px-3 py-1 rounded-full">{product.subcategory.toLowerCase()}</span>
               )}
             </div>
 
@@ -207,13 +207,13 @@ const ProductDetailPage: React.FC = () => {
               {product.originalPrice && (
                  <span className="text-lg text-gray-400 line-through">₹{product.originalPrice}</span>
               )}
-              <span className="text-3xl font-extrabold text-[#007F2D]">₹{product.price}</span>
+              <span className="text-3xl font-extrabold text-[#0ea5e9]">₹{product.price}</span>
             </div>
 
             {/* Size / Weight */}
             <div className="flex items-center gap-4 mb-6">
               <span className="text-sm font-bold text-gray-700">Size/Weight :</span>
-              <span className="border border-[#007F2D] text-[#007F2D] text-[11px] font-bold px-3 py-1 bg-white">{product.unit || '1 Pack'}</span>
+              <span className="border border-[#0ea5e9] text-[#0ea5e9] text-[11px] font-bold px-3 py-1 bg-white">{product.unit || '1 Pack'}</span>
             </div>
 
             {/* Add Action Area (Responsive) */}
@@ -235,7 +235,7 @@ const ProductDetailPage: React.FC = () => {
                 <button 
                   onClick={handleAddToCart}
                   disabled={isAdding || product.stock === 0}
-                  className="flex-1 bg-[#007F2D] text-white font-bold h-12 rounded-xl text-sm hover:bg-[#006e27] transition-all focus:ring-4 focus:ring-green-100 shadow-lg active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed uppercase tracking-wider"
+                  className="flex-1 bg-[#0ea5e9] text-white font-bold h-12 rounded-xl text-sm hover:bg-[#0284c7] transition-all focus:ring-4 focus:ring-green-100 shadow-lg active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed uppercase tracking-wider"
                 >
                   {isAdding ? 'Adding...' : 'Add To Cart'}
                 </button>
@@ -243,7 +243,7 @@ const ProductDetailPage: React.FC = () => {
                 <button 
                   onClick={handleWishlist}
                   className={`w-12 h-12 rounded-xl border flex items-center justify-center transition-all shadow-sm active:scale-95
-                    ${isWishlisted ? 'border-red-500 text-red-500 bg-red-50' : 'border-gray-200 text-gray-400 hover:border-[#007F2D] hover:text-[#007F2D] bg-white'}
+                    ${isWishlisted ? 'border-red-500 text-red-500 bg-red-50' : 'border-gray-200 text-gray-400 hover:border-[#0ea5e9] hover:text-[#0ea5e9] bg-white'}
                   `}
                 >
                   <svg stroke="currentColor" fill={isWishlisted ? 'currentColor' : 'none'} strokeWidth="2.5" viewBox="0 0 24 24" height="20" width="20">
@@ -258,13 +258,13 @@ const ProductDetailPage: React.FC = () => {
                <div className="flex border-b border-gray-200">
                  <button 
                    onClick={() => setActiveTab('Description')}
-                   className={`px-6 py-3 font-bold text-sm border-b-2 transition-colors ${activeTab === 'Description' ? 'border-[#007F2D] text-[#007F2D]' : 'border-transparent text-gray-500 hover:text-gray-800'}`}
+                   className={`px-6 py-3 font-bold text-sm border-b-2 transition-colors ${activeTab === 'Description' ? 'border-[#0ea5e9] text-[#0ea5e9]' : 'border-transparent text-gray-500 hover:text-gray-800'}`}
                  >
                    Description
                  </button>
                  <button 
                    onClick={() => setActiveTab('Review')}
-                   className={`px-6 py-3 font-bold text-sm border-b-2 transition-colors ${activeTab === 'Review' ? 'border-[#007F2D] text-[#007F2D]' : 'border-transparent text-gray-500 hover:text-gray-800'}`}
+                   className={`px-6 py-3 font-bold text-sm border-b-2 transition-colors ${activeTab === 'Review' ? 'border-[#0ea5e9] text-[#0ea5e9]' : 'border-transparent text-gray-500 hover:text-gray-800'}`}
                  >
                    Review (2)
                  </button>

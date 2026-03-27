@@ -68,7 +68,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
         <p className="text-sm text-gray-500 mb-6 leading-relaxed">
           {message}
           <br />
-          <span className="text-[#007F2D] font-semibold">Login to add items to your cart!</span>
+          <span className="text-[#0ea5e9] font-semibold">Login to add items to your cart!</span>
         </p>
 
         {/* Actions */}
@@ -81,7 +81,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
           </button>
           <button
             onClick={() => { navigate('/login'); onClose(); }}
-            className="flex-1 py-2.5 px-4 bg-[#007F2D] text-white rounded-xl font-bold text-sm hover:bg-[#006e27] transition-colors shadow-md"
+            className="flex-1 py-2.5 px-4 bg-[#0ea5e9] text-white rounded-xl font-bold text-sm hover:bg-[#0284c7] transition-colors shadow-md"
           >
             Login
           </button>

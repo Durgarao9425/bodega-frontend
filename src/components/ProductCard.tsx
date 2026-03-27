@@ -50,7 +50,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onRequestLogin, simp
   const handleImgError = (e: React.SyntheticEvent<HTMLImageElement>) => {
     const target = e.target as HTMLImageElement;
     target.onerror = null;
-    target.src = `https://placehold.co/300x300/f0fdf4/007F2D?text=${encodeURIComponent(product.name.slice(0, 12))}`;
+    target.src = `https://placehold.co/300x300/f0f9ff/0ea5e9?text=${encodeURIComponent(product.name.slice(0, 12))}`;
   };
 
   const discountPct = product.originalPrice && product.originalPrice > product.price
@@ -109,7 +109,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onRequestLogin, simp
 
         {/* Product name */}
         <h3
-          className="text-xs sm:text-[13px] font-semibold text-gray-800 line-clamp-2 cursor-pointer hover:text-[#007F2D] leading-snug mb-1"
+          className="text-xs sm:text-[13px] font-semibold text-gray-800 line-clamp-2 cursor-pointer hover:text-primary-500 leading-snug mb-1"
           onClick={() => navigate(`/products/${product._id}`)}
         >
           {product.name}
@@ -122,7 +122,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onRequestLogin, simp
 
             {/* Price row */}
             <div className="flex items-baseline gap-2 mt-auto mb-2">
-              <span className="text-[#007F2D] font-extrabold text-base sm:text-lg leading-none">
+              <span className="text-primary-500 font-extrabold text-base sm:text-lg leading-none">
                 ₹{product.price}
               </span>
               {product.originalPrice && product.originalPrice > product.price && (
@@ -140,23 +140,23 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onRequestLogin, simp
               </button>
             ) : cartItem ? (
               /* Quantity stepper — shown when item is already in cart */
-              <div className="flex items-center border-2 border-[#007F2D] rounded-lg overflow-hidden h-9 w-full">
+              <div className="flex items-center border-2 border-primary-500 rounded-lg overflow-hidden h-9 w-full">
                 <button
                   onClick={() => updateQuantity(cartItem.product._id, cartItem.quantity - 1)}
-                  className="flex-1 h-full bg-[#007F2D] hover:bg-[#006e27] text-white font-extrabold text-sm flex items-center justify-center transition-colors"
+                  className="flex-1 h-full bg-primary-500 hover:bg-primary-600 text-white font-extrabold text-sm flex items-center justify-center transition-colors"
                   aria-label="Decrease"
                 >
                   {cartItem.quantity <= 1 ? (
                     <svg viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5"><path d="M3 6h18v2H3V6zm3 4h12l-1.5 9H7.5L6 10z" /></svg>
                   ) : '−'}
                 </button>
-                <span className="flex-none w-10 text-center text-sm font-extrabold text-[#007F2D]">
+                <span className="flex-none w-10 text-center text-sm font-extrabold text-primary-500">
                   {cartItem.quantity}
                 </span>
                 <button
                   onClick={() => updateQuantity(cartItem.product._id, cartItem.quantity + 1)}
                   disabled={cartItem.quantity >= product.stock}
-                  className="flex-1 h-full bg-[#007F2D] hover:bg-[#006e27] text-white font-extrabold text-sm flex items-center justify-center transition-colors disabled:opacity-40"
+                  className="flex-1 h-full bg-primary-500 hover:bg-primary-600 text-white font-extrabold text-sm flex items-center justify-center transition-colors disabled:opacity-40"
                   aria-label="Increase"
                 >
                   +
@@ -167,7 +167,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onRequestLogin, simp
               <button
                 onClick={handleAddToCart}
                 disabled={adding}
-                className="w-full h-9 bg-[#007F2D] hover:bg-[#006e27] active:scale-95 text-white text-xs sm:text-sm font-bold rounded-lg transition-all shadow-sm flex items-center justify-center gap-1.5 disabled:opacity-70"
+                className="w-full h-9 bg-primary-500 hover:bg-primary-600 active:scale-95 text-white text-xs sm:text-sm font-bold rounded-lg transition-all shadow-sm flex items-center justify-center gap-1.5 disabled:opacity-70"
               >
                 {adding ? (
                   <div className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />

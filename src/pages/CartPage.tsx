@@ -69,7 +69,7 @@ const CartPage: React.FC = () => {
         <div className="flex-1 flex flex-col items-center justify-center py-20 px-4 text-center">
           <div className="text-7xl mb-6 opacity-40">🛒</div>
           <h2 className="text-xl font-bold text-gray-800 mb-2">Your cart is empty</h2>
-          <button onClick={() => navigate('/products')} className="bg-[#007F2D] text-white font-bold px-8 py-3 rounded-xl hover:bg-[#006e27] mt-5">
+          <button onClick={() => navigate('/products')} className="bg-[#0ea5e9] text-white font-bold px-8 py-3 rounded-xl hover:bg-[#0284c7] mt-5">
             Start Shopping →
           </button>
         </div>
@@ -129,7 +129,7 @@ const CartPage: React.FC = () => {
 
       {/* GLOBAL TOAST */}
       {toast.msg && (
-        <div className={`fixed top-12 left-1/2 -translate-x-1/2 ${toast.type === 'success' ? 'bg-green-50 text-[#007F2D] border-green-200' : toast.type === 'error' ? 'bg-red-50 text-red-500 border-red-200' : 'bg-blue-50 text-blue-600 border-blue-200'} border px-8 py-4 rounded-2xl font-black text-base shadow-[0_20px_50px_rgba(0,0,0,0.15)] z-[999] animate-fade-in flex items-center gap-4 min-w-[320px]`}>
+        <div className={`fixed top-12 left-1/2 -translate-x-1/2 ${toast.type === 'success' ? 'bg-green-50 text-[#0ea5e9] border-green-200' : toast.type === 'error' ? 'bg-red-50 text-red-500 border-red-200' : 'bg-blue-50 text-blue-600 border-blue-200'} border px-8 py-4 rounded-2xl font-black text-base shadow-[0_20px_50px_rgba(0,0,0,0.15)] z-[999] animate-fade-in flex items-center gap-4 min-w-[320px]`}>
           <span className="text-2xl">
             {toast.type === 'success' ? '✅' : toast.type === 'error' ? '❌' : 'ℹ️'}
           </span>
@@ -158,7 +158,7 @@ const CartPage: React.FC = () => {
                   <p className="text-xs text-gray-400 mb-1">{item.product.unit}</p>
                   <div className="flex items-center gap-2">
                     <span className="text-xs text-gray-400 line-through">₹{item.product.originalPrice}</span>
-                    <span className="font-bold text-[#007F2D] text-sm">₹{item.product?.price || item.price}</span>
+                    <span className="font-bold text-[#0ea5e9] text-sm">₹{item.product?.price || item.price}</span>
                   </div>
                 </div>
 
@@ -185,7 +185,7 @@ const CartPage: React.FC = () => {
           {deliveryCharges === 0 && (
             <div className="bg-green-50 border border-green-100 p-3 rounded-lg flex items-center gap-2 mb-6">
               <span>🎉</span>
-              <p className="text-[#007F2D] font-bold text-xs uppercase tracking-wide">Congratulations! You've unlocked FREE DELIVERY ✨</p>
+              <p className="text-[#0ea5e9] font-bold text-xs uppercase tracking-wide">Congratulations! You've unlocked FREE DELIVERY ✨</p>
             </div>
           )}
 
@@ -216,10 +216,10 @@ const CartPage: React.FC = () => {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4">
-              <Link to="/products" className="border border-[#007F2D] text-[#007F2D] font-bold py-3 px-6 rounded-xl hover:bg-green-50 text-center flex-1 text-sm flex items-center justify-center gap-2">
+              <Link to="/products" className="border border-[#0ea5e9] text-[#0ea5e9] font-bold py-3 px-6 rounded-xl hover:bg-green-50 text-center flex-1 text-sm flex items-center justify-center gap-2">
                 + Add More items
               </Link>
-              <button onClick={handleCheckoutClick} className="bg-[#007F2D] text-white font-bold py-3 px-6 rounded-xl hover:bg-[#006e27] text-center flex-1 focus:ring-4 focus:ring-green-100 transition-colors shadow-lg active:scale-95 text-lg">
+              <button onClick={handleCheckoutClick} className="bg-[#0ea5e9] text-white font-bold py-3 px-6 rounded-xl hover:bg-[#0284c7] text-center flex-1 focus:ring-4 focus:ring-green-100 transition-colors shadow-lg active:scale-95 text-lg">
                 Checkout
               </button>
             </div>
@@ -230,7 +230,7 @@ const CartPage: React.FC = () => {
         <div className="w-full lg:w-[40%]">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-bold text-gray-800">My Addresses</h2>
-            <button onClick={() => setShowAddModal(true)} className="text-[#007F2D] text-sm font-bold hover:underline flex items-center gap-1">
+            <button onClick={() => setShowAddModal(true)} className="text-[#0ea5e9] text-sm font-bold hover:underline flex items-center gap-1">
               + Add Address
             </button>
           </div>
@@ -251,16 +251,16 @@ const CartPage: React.FC = () => {
                 <div
                   key={addr._id}
                   onClick={() => setSelectedAddressId(addr._id)}
-                  className={`border rounded-xl p-4 cursor-pointer relative flex gap-3 ${selectedAddressId === addr._id ? 'border-[#007F2D] bg-[#f7fcf9]' : 'border-gray-200 bg-white hover:border-gray-300'}`}
+                  className={`border rounded-xl p-4 cursor-pointer relative flex gap-3 ${selectedAddressId === addr._id ? 'border-[#0ea5e9] bg-[#f7fcf9]' : 'border-gray-200 bg-white hover:border-gray-300'}`}
                 >
                   <div className="pt-1 select-none">
-                    <input type="radio" checked={selectedAddressId === addr._id} readOnly className="accent-[#007F2D] w-4 h-4" />
+                    <input type="radio" checked={selectedAddressId === addr._id} readOnly className="accent-[#0ea5e9] w-4 h-4" />
                   </div>
                   <div>
                     <p className="font-bold text-sm text-gray-800 mb-1">{addr.fullName} <span className="text-gray-400 font-normal">({addr.mobile})</span> | <span className="font-bold">{addr.type}</span></p>
                     <p className="text-xs text-gray-500 leading-tight pr-6 relative">{addr.flatNo}, {addr.addressLine1}</p>
                     <div className="absolute right-4 top-4 flex gap-2">
-                      <button className="text-[#007F2D] hover:scale-110">✏️</button>
+                      <button className="text-[#0ea5e9] hover:scale-110">✏️</button>
                     </div>
                   </div>
                 </div>
@@ -274,22 +274,22 @@ const CartPage: React.FC = () => {
       {showAddModal && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl w-full max-w-3xl shadow-2xl p-6 relative overflow-y-auto max-h-[90vh]">
-            <h2 className="text-[#007F2D] text-lg font-bold mb-6">Add Address</h2>
+            <h2 className="text-[#0ea5e9] text-lg font-bold mb-6">Add Address</h2>
             <form onSubmit={handleSaveAddress} className="space-y-5">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div>
                   <label className="text-xs font-bold text-gray-600 mb-1.5 block">Full Name *</label>
-                  <input required placeholder="Enter your name" className="w-full border p-2.5 rounded focus:border-[#007F2D] outline-none text-sm" value={formData.fullName} onChange={e => setFormData({ ...formData, fullName: e.target.value })} />
+                  <input required placeholder="Enter your name" className="w-full border p-2.5 rounded focus:border-[#0ea5e9] outline-none text-sm" value={formData.fullName} onChange={e => setFormData({ ...formData, fullName: e.target.value })} />
                 </div>
                 <div>
                   <label className="text-xs font-bold text-gray-600 mb-1.5 block">Mobile *</label>
-                  <input required placeholder="10 digit mobile number" className="w-full border p-2.5 rounded focus:border-[#007F2D] outline-none text-sm" value={formData.mobile} onChange={e => setFormData({ ...formData, mobile: e.target.value })} />
+                  <input required placeholder="10 digit mobile number" className="w-full border p-2.5 rounded focus:border-[#0ea5e9] outline-none text-sm" value={formData.mobile} onChange={e => setFormData({ ...formData, mobile: e.target.value })} />
                 </div>
               </div>
 
               <div>
                 <label className="text-xs font-bold text-gray-600 mb-1.5 block">Address *</label>
-                <input required placeholder="Area, Street, Sector, Village" className="w-full border p-2.5 rounded focus:border-[#007F2D] outline-none text-sm" value={formData.addressLine1} onChange={e => setFormData({ ...formData, addressLine1: e.target.value })} />
+                <input required placeholder="Area, Street, Sector, Village" className="w-full border p-2.5 rounded focus:border-[#0ea5e9] outline-none text-sm" value={formData.addressLine1} onChange={e => setFormData({ ...formData, addressLine1: e.target.value })} />
               </div>
 
 
@@ -297,11 +297,11 @@ const CartPage: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div>
                   <label className="text-xs font-bold text-gray-600 mb-1.5 block">Flat No / House No /Building No *</label>
-                  <input required placeholder="" className="w-full border border-green-400 p-2.5 rounded focus:border-[#007F2D] outline-none text-sm" value={formData.flatNo} onChange={e => setFormData({ ...formData, flatNo: e.target.value })} />
+                  <input required placeholder="" className="w-full border border-green-400 p-2.5 rounded focus:border-[#0ea5e9] outline-none text-sm" value={formData.flatNo} onChange={e => setFormData({ ...formData, flatNo: e.target.value })} />
                 </div>
                 <div>
                   <label className="text-xs font-bold text-gray-600 mb-1.5 block">Type *</label>
-                  <select className="w-full border p-2.5 rounded focus:border-[#007F2D] outline-none text-sm bg-white" value={formData.type} onChange={e => setFormData({ ...formData, type: e.target.value })}>
+                  <select className="w-full border p-2.5 rounded focus:border-[#0ea5e9] outline-none text-sm bg-white" value={formData.type} onChange={e => setFormData({ ...formData, type: e.target.value })}>
                     <option>Home</option>
                     <option>Office</option>
                     <option>Other</option>
@@ -310,8 +310,8 @@ const CartPage: React.FC = () => {
               </div>
 
               <div className="flex gap-4 pt-4">
-                <button type="submit" className="bg-[#007F2D] text-white px-8 py-2.5 rounded-lg font-bold hover:bg-[#006e27]">SAVE</button>
-                <button type="button" onClick={() => setShowAddModal(false)} className="border border-[#007F2D] text-[#007F2D] px-8 py-2.5 rounded-lg font-bold hover:bg-green-50">Cancel</button>
+                <button type="submit" className="bg-[#0ea5e9] text-white px-8 py-2.5 rounded-lg font-bold hover:bg-[#0284c7]">SAVE</button>
+                <button type="button" onClick={() => setShowAddModal(false)} className="border border-[#0ea5e9] text-[#0ea5e9] px-8 py-2.5 rounded-lg font-bold hover:bg-green-50">Cancel</button>
               </div>
             </form>
           </div>
@@ -322,14 +322,14 @@ const CartPage: React.FC = () => {
       {showConfirmModal && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 animate-fade-in">
           <div className="bg-white rounded-2xl w-full max-w-sm shadow-2xl p-6 text-center transform inline-block">
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center text-[#007F2D] text-3xl mx-auto mb-4">
+            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center text-[#0ea5e9] text-3xl mx-auto mb-4">
               🛒
             </div>
             <h2 className="text-xl font-bold text-gray-800 mb-2">Confirm Order?</h2>
             <p className="text-gray-500 text-sm mb-6">Are you sure you want to place the order with Cash on Delivery? Total: <strong className="text-gray-900">₹{grandTotal.toFixed(2)}</strong></p>
             <div className="flex gap-3">
               <button onClick={() => setShowConfirmModal(false)} className="flex-1 py-2 rounded-lg font-bold text-gray-500 bg-gray-100 hover:bg-gray-200 transition-colors">Cancel</button>
-              <button onClick={confirmOrder} disabled={isProcessing} className="flex-1 py-2 rounded-lg font-bold text-white bg-[#007F2D] hover:bg-[#006e27] transition-colors flex justify-center items-center">
+              <button onClick={confirmOrder} disabled={isProcessing} className="flex-1 py-2 rounded-lg font-bold text-white bg-[#0ea5e9] hover:bg-[#0284c7] transition-colors flex justify-center items-center">
                 {isProcessing ? 'Processing...' : 'Confirm'}
               </button>
             </div>

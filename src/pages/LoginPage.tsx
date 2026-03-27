@@ -49,11 +49,11 @@ const LoginPage: React.FC = () => {
   return (
     <div className="min-h-screen flex">
       {/* Left Side - Branding (visible on large screens) */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-[#007F2D] to-[#005c20] flex-col items-center justify-center p-12 text-white">
+      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary-500 to-primary-700 flex-col items-center justify-center p-12 text-white">
         {/* Logo */}
         <div className="text-center mb-8">
           <div className="text-6xl mb-4">🛒</div>
-          <h1 className="text-5xl font-bold mb-2">bodegaa</h1>
+          <h1 className="text-5xl font-bold mb-2">StoreWave</h1>
           <p className="text-primary-100 text-xl">Your Neighbourhood Store</p>
         </div>
 
@@ -79,9 +79,9 @@ const LoginPage: React.FC = () => {
           {/* Mobile Logo */}
           <div className="text-center mb-8 lg:hidden">
             <div className="text-5xl mb-3 flex justify-center">
-              <span className="p-3 bg-[#007F2D] rounded-2xl shadow-lg">🛒</span>
+              <span className="p-3 bg-primary-500 rounded-2xl shadow-lg">🛒</span>
             </div>
-            <h1 className="text-4xl font-black text-[#007F2D] tracking-tight">bodegaa</h1>
+            <h1 className="text-4xl font-black text-primary-600 tracking-tight">StoreWave</h1>
             <p className="text-gray-500 font-medium">Your Neighbourhood Store</p>
           </div>
 
@@ -100,7 +100,7 @@ const LoginPage: React.FC = () => {
                 <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">
                   Phone Number
                 </label>
-                <div className="flex border-2 border-gray-100 rounded-2xl overflow-hidden focus-within:border-[#007F2D] focus-within:ring-4 focus-within:ring-[#007F2D]/10 transition-all duration-300 bg-gray-50">
+                <div className="flex border-2 border-gray-100 rounded-2xl overflow-hidden focus-within:border-primary-500 focus-within:ring-4 focus-within:ring-primary-500/10 transition-all duration-300 bg-gray-50">
                   {/* Country Code */}
                   <span className="bg-white px-2 flex items-center text-gray-600 font-bold text-sm border-r border-gray-100">
                     IN +91
@@ -135,7 +135,7 @@ const LoginPage: React.FC = () => {
                   w-full py-4 rounded-2xl text-white font-bold text-base transition-all duration-300 shadow-lg
                   ${isLoading || phone.length < 10
                     ? 'bg-gray-200 text-gray-400 cursor-not-allowed shadow-none'
-                    : 'bg-[#007F2D] hover:bg-[#006e27] hover:shadow-[#007F2D]/30 active:scale-[0.98]'
+                    : 'bg-primary-500 hover:bg-primary-600 hover:shadow-primary-500/30 active:scale-[0.98]'
                   }
                 `}
               >

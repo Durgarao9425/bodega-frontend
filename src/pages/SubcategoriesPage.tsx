@@ -57,7 +57,7 @@ const SubcategoriesPage: React.FC = () => {
   return (
     <div className="bg-white">
       <main className="max-w-[1200px] mx-auto px-4 py-8">
-        <h1 className="text-3xl font-extrabold text-[#007F2D] text-center mb-8 tracking-wide">
+        <h1 className="text-3xl font-extrabold text-[#0ea5e9] text-center mb-8 tracking-wide">
           Shop by subcategories
         </h1>
 
@@ -76,7 +76,7 @@ const SubcategoriesPage: React.FC = () => {
                   onError={e => (e.target as HTMLImageElement).src = `https://placehold.co/400x400/f0fdf4/007F2D?text=${encodeURIComponent(sub.name.slice(0, 10))}`}
                 />
               </div>
-              <p className="font-bold text-gray-800 text-sm md:text-base text-center group-hover:text-[#007F2D] transition-colors leading-tight">
+              <p className="font-bold text-gray-800 text-sm md:text-base text-center group-hover:text-[#0ea5e9] transition-colors leading-tight">
                 {sub.name}
               </p>
             </div>

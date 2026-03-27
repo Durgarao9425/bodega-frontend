@@ -10,13 +10,13 @@ const GlobalLoader: React.FC = () => {
       <div className="flex flex-col items-center gap-6">
         {/* Logo */}
         <div className="flex items-end">
-          <span className="text-orange-500 font-extrabold text-5xl leading-none">B</span>
-          <span className="text-[#007F2D] font-bold text-5xl leading-none tracking-tight">odegaa</span>
+          <span className="text-orange-500 font-extrabold text-5xl leading-none">S</span>
+          <span className="text-[#0ea5e9] font-bold text-5xl leading-none tracking-tight">toreWave</span>
         </div>
         <span className="text-[10px] uppercase tracking-[4px] text-gray-400 font-bold">BEST IN QUALITY</span>
 
         {/* Spinner */}
-        <div className="w-10 h-10 border-4 border-[#007F2D]/20 border-t-[#007F2D] rounded-full animate-spin mt-2" />
+        <div className="w-10 h-10 border-4 border-[#0ea5e9]/20 border-t-[#0ea5e9] rounded-full animate-spin mt-2" />
       </div>
     </div>
   );
