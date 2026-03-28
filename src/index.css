@@ -1,11 +1,79 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* =============================================
-   Google Fonts
-   ============================================= */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+:root, [data-theme='blue'] {
+  --color-primary-50: #f0f7ff;
+  --color-primary-100: #e0effe;
+  --color-primary-200: #bae2fd;
+  --color-primary-300: #7cc7fb;
+  --color-primary-400: #3ba2f6;
+  --color-primary-500: #3b82f6;
+  --color-primary-600: #2563eb;
+  --color-primary-700: #1d4ed8;
+  --color-primary-800: #1e40af;
+  --color-primary-900: #1e3a8a;
+  --color-secondary: #60a5fa;
+}
+
+[data-theme='green'] {
+  --color-primary-50: #f0fdf4;
+  --color-primary-100: #dcfce7;
+  --color-primary-200: #bbf7d0;
+  --color-primary-300: #86efac;
+  --color-primary-400: #4ade80;
+  --color-primary-500: #22c55e; 
+  --color-primary-600: #16a34a;
+  --color-primary-700: #15803d;
+  --color-primary-800: #166534;
+  --color-primary-900: #14532d;
+  --color-secondary: #4ade80;
+}
+
+[data-theme='purple'] {
+  --color-primary-50: #f5f3ff;
+  --color-primary-100: #ede9fe;
+  --color-primary-200: #ddd6fe;
+  --color-primary-300: #c4b5fd;
+  --color-primary-400: #a78bfa;
+  --color-primary-500: #8b5cf6;
+  --color-primary-600: #7c3aed;
+  --color-primary-700: #6d28d9;
+  --color-primary-800: #5b21b6;
+  --color-primary-900: #4c1d95;
+  --color-secondary: #a78bfa;
+}
+
+[data-theme='rose'] {
+  --color-primary-50: #fff1f2;
+  --color-primary-100: #ffe4e6;
+  --color-primary-200: #fecdd3;
+  --color-primary-300: #fda4af;
+  --color-primary-400: #fb7185;
+  --color-primary-500: #f43f5e;
+  --color-primary-600: #e11d48;
+  --color-primary-700: #be123c;
+  --color-primary-800: #9f1239;
+  --color-primary-900: #881337;
+  --color-secondary: #fb7185;
+}
+
+[data-theme='teal'] {
+  --color-primary-50: #f0fdfa;
+  --color-primary-100: #ccfbf1;
+  --color-primary-200: #99f6e4;
+  --color-primary-300: #5eead4;
+  --color-primary-400: #2dd4bf;
+  --color-primary-500: #14b8a6;
+  --color-primary-600: #0d9488;
+  --color-primary-700: #0f766e;
+  --color-primary-800: #115e59;
+  --color-primary-900: #134e4a;
+  --color-secondary: #2dd4bf;
+}
+
+/* @import is moved to top */
 
 /* =============================================
    Custom Scrollbar
@@ -23,8 +91,8 @@
    ============================================= */
 body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  color: #1a1a2e;
-  background-color: #f8f9fa;
+  color: #1f2937;
+  background-color: #f4f7fb;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -93,9 +161,9 @@ input[type="range"].price-slider::-webkit-slider-thumb {
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  background: #0ea5e9;
+  background: var(--color-primary-500);
   border: 3px solid white;
-  box-shadow: 0 0 0 1px #0ea5e9, 0 2px 6px rgba(14,165,233,0.4);
+  box-shadow: 0 0 0 1px var(--color-primary-500), 0 2px 6px rgba(0,0,0,0.1);
   cursor: pointer;
   transition: transform 0.15s;
 }
@@ -108,15 +176,15 @@ input[type="range"].price-slider::-moz-range-thumb {
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  background: #0ea5e9;
+  background: var(--color-primary-500);
   border: 3px solid white;
-  box-shadow: 0 0 0 1px #0ea5e9;
+  box-shadow: 0 0 0 1px var(--color-primary-500);
   cursor: pointer;
 }
 
 /* Filled portion — Firefox */
 input[type="range"].price-slider::-moz-range-progress {
-  background: #0ea5e9;
+  background: var(--color-primary-500);
   height: 4px;
   border-radius: 999px;
 }
@@ -135,7 +203,7 @@ img[src=""], img:not([src]) {
    Focus Styles
    ============================================= */
 :focus-visible {
-  outline: 2px solid #0ea5e9;
+  outline: 2px solid var(--color-primary-500);
   outline-offset: 2px;
 }
 

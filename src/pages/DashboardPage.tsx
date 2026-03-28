@@ -5,38 +5,65 @@ import LoginModal from '../components/LoginModal';
 import api from '../services/api';
 import { Product } from '../types';
 import { useAuth } from '../context/AuthContext';
+import Loader from '../components/Loader';
 
-// ── Verified working Unsplash images for category cards ──
+// ── Attractive Category Grid ──
 const HERO_CATEGORIES = [
-  {
-    name: 'Households',
-    path: '/category/Households',
-    image: 'https://images.unsplash.com/photo-1563453392212-326f5e854473?auto=format&fit=crop&q=80&w=500&h=380',
-    bg: '#f0fdf4',
-  },
   {
     name: 'Fruits & Vegetables',
     path: '/category/Fruits & Vegetables',
+    emoji: '🥦',
     image: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&q=80&w=500&h=380',
-    bg: '#fffbeb',
+    from: '#bbf7d0', to: '#86efac', text: '#166534',
   },
   {
     name: 'Groceries',
     path: '/category/Groceries',
+    emoji: '🌾',
     image: 'https://images.unsplash.com/photo-1578916171728-46686eac8d58?auto=format&fit=crop&q=80&w=500&h=380',
-    bg: '#fdf4ff',
+    from: '#fef9c3', to: '#fde047', text: '#713f12',
+  },
+  {
+    name: 'Dairy & Eggs',
+    path: '/category/Dairy & Eggs',
+    emoji: '🥛',
+    image: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&q=80&w=500&h=380',
+    from: '#e0f2fe', to: '#7dd3fc', text: '#0c4a6e',
+  },
+  {
+    name: 'Snacks',
+    path: '/category/Snacks',
+    emoji: '🍿',
+    image: 'https://images.unsplash.com/photo-1621939514649-280e2ee25f60?auto=format&fit=crop&q=80&w=500&h=380',
+    from: '#fde8d8', to: '#fdba74', text: '#7c2d12',
+  },
+  {
+    name: 'Beverages',
+    path: '/category/Beverages',
+    emoji: '🧃',
+    image: 'https://images.unsplash.com/photo-1548940740-204726a19be3?auto=format&fit=crop&q=80&w=500&h=380',
+    from: '#fce7f3', to: '#f9a8d4', text: '#831843',
   },
   {
     name: 'Dry Fruits',
     path: '/category/Dry Fruits',
+    emoji: '🥜',
     image: 'https://images.unsplash.com/photo-1599599810769-bcde5a160d32?auto=format&fit=crop&q=80&w=500&h=380',
-    bg: '#fff7ed',
+    from: '#fef3c7', to: '#fbbf24', text: '#78350f',
   },
   {
-    name: 'Testing cat',
-    path: '/category/Testing cat',
-    image: 'https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?auto=format&fit=crop&q=80&w=500&h=380',
-    bg: '#eff6ff',
+    name: 'Households',
+    path: '/category/Households',
+    emoji: '🧴',
+    image: 'https://images.unsplash.com/photo-1563453392212-326f5e854473?auto=format&fit=crop&q=80&w=500&h=380',
+    from: '#ede9fe', to: '#c4b5fd', text: '#4c1d95',
+  },
+  {
+    name: 'Bakery',
+    path: '/category/Bakery',
+    emoji: '🍞',
+    image: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&q=80&w=500&h=380',
+    from: '#fdf2f8', to: '#f0abfc', text: '#701a75',
   },
 ];
 
@@ -44,39 +71,33 @@ const SECTIONS = [
   {
     title: 'Groceries',
     items: [
-      { name: 'Aata, maida, besan & sooji', img: 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?q=80&w=500&h=400&fit=crop' },
-      { name: 'Dals, Pulses & Grains', img: 'https://images.unsplash.com/photo-1515543237350-b3eea1ec8082?q=80&w=500&h=400&fit=crop' },
+      { name: 'Aata, Maida & Besan', img: 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?q=80&w=500&h=400&fit=crop' },
+      { name: 'Dals & Pulses', img: 'https://images.unsplash.com/photo-1515543237350-b3eea1ec8082?q=80&w=500&h=400&fit=crop' },
       { name: 'Masala & Spices', img: 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?q=80&w=500&h=400&fit=crop' },
       { name: 'Oil & Ghee', img: 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?q=80&w=500&h=400&fit=crop' },
-      { name: 'Rice, Poha & Sabhudana', img: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?q=80&w=500&h=400&fit=crop' },
+      { name: 'Rice & Grains', img: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?q=80&w=500&h=400&fit=crop' },
+    ],
+  },
+  {
+    title: 'Fresh Fruits & Vegetables',
+    items: [
+      { name: 'Fresh Fruits', img: 'https://images.unsplash.com/photo-1610832958506-aa56368176cf?q=80&w=500&h=400&fit=crop' },
+      { name: 'Fresh Vegetables', img: 'https://images.unsplash.com/photo-1566385101042-1a0aa0c1268c?q=80&w=500&h=400&fit=crop' },
+      { name: 'Exotic Veggies', img: 'https://images.unsplash.com/photo-1457296898342-cdd24585d095?q=80&w=500&h=400&fit=crop' },
     ],
   },
   {
     title: 'Households',
     items: [
-      { name: 'Breakfast & cereals', img: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?q=80&w=500&h=400&fit=crop' },
+      { name: 'Breakfast & Cereals', img: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?q=80&w=500&h=400&fit=crop' },
       { name: 'Detergents & Cleaning', img: 'https://images.unsplash.com/photo-1585771724684-38269d6639fd?q=80&w=500&h=400&fit=crop' },
-      { name: 'Facewash & skincare', img: 'https://images.unsplash.com/photo-1556228578-0d85b1a4d571?q=80&w=500&h=400&fit=crop' },
-      { name: 'Hair care', img: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?q=80&w=500&h=400&fit=crop' },
-      { name: 'Oral care', img: 'https://images.unsplash.com/photo-1607613009820-a29f7bb81c04?q=80&w=500&h=400&fit=crop' },
-      { name: 'Pasta & noodles', img: 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?q=80&w=500&h=400&fit=crop' },
-      { name: 'Soaps & body wash', img: 'https://images.unsplash.com/photo-1600857062241-98e5dba7f214?q=80&w=500&h=400&fit=crop' },
-    ]
+      { name: 'Skin & Face Care', img: 'https://images.unsplash.com/photo-1556228578-0d85b1a4d571?q=80&w=500&h=400&fit=crop' },
+      { name: 'Hair Care', img: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?q=80&w=500&h=400&fit=crop' },
+      { name: 'Oral Care', img: 'https://images.unsplash.com/photo-1607613009820-a29f7bb81c04?q=80&w=500&h=400&fit=crop' },
+      { name: 'Soaps & Body Wash', img: 'https://images.unsplash.com/photo-1600857062241-98e5dba7f214?q=80&w=500&h=400&fit=crop' },
+      { name: 'Pasta & Noodles', img: 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?q=80&w=500&h=400&fit=crop' },
+    ],
   },
-  {
-    title: 'Fruits & Vegetables',
-    items: [
-      { name: 'Fruits', img: 'https://images.unsplash.com/photo-1610832958506-aa56368176cf?q=80&w=500&h=400&fit=crop' },
-      { name: 'Vegetables', img: 'https://images.unsplash.com/photo-1566385101042-1a0aa0c1268c?q=80&w=500&h=400&fit=crop' },
-      { name: 'Fresh Fruits', img: 'https://images.unsplash.com/photo-1457296898342-cdd24585d095?q=80&w=500&h=400&fit=crop' },
-    ]
-  },
-  {
-    title: 'Testing cat',
-    items: [
-      { name: 'Other Items', img: 'https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?q=80&w=500&h=400&fit=crop' }
-    ]
-  }
 ];
 
 const DashboardPage: React.FC = () => {
@@ -100,63 +121,71 @@ const DashboardPage: React.FC = () => {
   };
 
   return (
-    <div className="bg-[#f8f9fa]">
+    <div className="bg-[#f4f7fb]">
       {/* ── HERO BANNER ── */}
-      <section className="bg-primary-500 md:bg-primary-500 relative overflow-hidden">
-        {/* Mobile-only Hero Image (Yellow background style) */}
-        <div className="md:hidden w-full h-[220px] bg-[#FFD700] relative flex items-center justify-center overflow-hidden">
+      <section className="bg-gradient-to-r from-primary-600 via-primary-500 to-primary-400 relative overflow-hidden shadow-inner">
+        {/* Mobile-only Hero Image */}
+        <div className="md:hidden w-full h-[240px] relative flex items-center justify-center overflow-hidden">
           <img
             src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=800"
             alt="Fresh Groceries"
-            className="w-full h-full object-cover opacity-90"
+            className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-transparent"></div>
-          <div className="absolute bottom-4 left-4 right-4 text-white drop-shadow-lg">
-            <h1 className="text-2xl font-black leading-tight">Fresh Essentials<br />Delivered Fast!</h1>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+          <div className="absolute bottom-6 left-5 right-5 text-white">
+            <span className="text-[9px] font-black uppercase tracking-widest bg-yellow-400 text-black px-2 py-1 rounded inline-block mb-3">
+              Fastest Delivery
+            </span>
+            <h1 className="text-3xl font-black leading-[1.1] drop-shadow-md mb-4">
+              Fresh Essentials<br />Delivered Fast!
+            </h1>
+            <button
+              onClick={() => navigate('/products')}
+              className="bg-white text-primary-700 text-xs font-black px-6 py-2.5 rounded-lg shadow-lg active:scale-95 transition-transform inline-flex items-center gap-2"
+            >
+              Shop Now <span>→</span>
+            </button>
           </div>
         </div>
 
         {/* Desktop Hero Content */}
-        <div className="hidden md:flex max-w-[1400px] mx-auto px-10 py-12 items-center justify-between gap-6">
-          <div className="text-white z-10 text-left">
-            <span className="text-[11px] font-bold uppercase tracking-widest bg-white/20 px-3 py-1 rounded-full inline-block mb-4">
-              🚀 Fast Delivery · Fresh Every Day
+        <div className="hidden md:flex max-w-[1400px] mx-auto px-10 py-8 items-center justify-between gap-12 min-h-[300px]">
+          <div className="text-white z-10 text-left flex-1 max-w-2xl">
+            <span className="text-[10px] font-bold uppercase tracking-widest bg-black/20 backdrop-blur-sm px-3 py-1.5 rounded-full border border-white/10 inline-flex items-center gap-2 mb-8">
+              🚀 FAST DELIVERY · FRESH EVERY DAY
             </span>
-            <h1 className="text-2xl sm:text-3xl md:text-5xl font-extrabold leading-tight mb-3">
+            <h1 className="text-4xl md:text-6xl font-black leading-[1.1] mb-6 tracking-tight">
               Fresh Groceries<br />
-              <span className="text-yellow-300">Delivered in 30 Minutes!</span>
+              <span className="text-yellow-400">Delivered in 30 Minutes!</span>
             </h1>
-            <p className="text-green-100 text-sm md:text-base mb-6 max-w-md">
+            <p className="text-white/90 text-lg md:text-xl font-medium mb-10 max-w-xl leading-relaxed">
               Order fresh fruits, vegetables, dairy & thousands of daily essentials right to your door.
             </p>
-            <div className="flex gap-3 justify-start flex-wrap">
+            <div className="flex gap-4 justify-start">
               <button
                 onClick={() => navigate('/products')}
-                className="bg-white text-primary-500 font-extrabold px-7 py-3 rounded-xl hover:bg-yellow-300 transition-all shadow-lg text-sm"
+                className="bg-white text-primary-600 font-black px-12 py-4 rounded-xl hover:bg-gray-50 transition-all shadow-xl text-lg flex items-center gap-2"
               >
-                Shop Now →
+                Shop Now <span>→</span>
               </button>
-              {!user && (
-                <button
-                  onClick={() => navigate('/login')}
-                  className="border-2 border-white/60 text-white font-bold px-7 py-3 rounded-xl hover:bg-white/10 transition-all text-sm"
-                >
-                  Login
-                </button>
-              )}
             </div>
           </div>
 
-          {/* Stats pills — desktop only */}
-          <div className="flex flex-col gap-3 z-10">
+          <div className="flex flex-col gap-4 z-10 w-72">
             {[
               { emoji: '⚡', label: '30 Min Delivery' },
               { emoji: '🥬', label: 'Farm Fresh' },
               { emoji: '💰', label: 'Best Prices' },
               { emoji: '🛡️', label: '100% Genuine' },
-            ].map(s => (
-              <div key={s.label} className="bg-white/15 border border-white/25 backdrop-blur rounded-xl px-5 py-3 flex items-center gap-3 text-white">
-                <span className="text-2xl">{s.emoji}</span>
+            ].map((s, i) => (
+              <div 
+                key={s.label} 
+                className="bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-2xl flex items-center gap-4 text-white hover:bg-white/20 transition-all cursor-default shadow-lg group"
+                style={{ animationDelay: `${i * 100}ms` }}
+              >
+                <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-2xl shadow-inner group-hover:scale-110 transition-transform">
+                  {s.emoji}
+                </div>
                 <span className="font-bold text-sm">{s.label}</span>
               </div>
             ))}
@@ -177,27 +206,17 @@ const DashboardPage: React.FC = () => {
             <p className="text-gray-500 text-sm mt-1">Your One-Stop Destination</p>
           </div>
 
-          {/* Grid for mobile (2x2), Scroll for desktop */}
-          <div className="grid grid-cols-2 md:flex md:gap-5 gap-3 px-1 md:overflow-x-auto no-scrollbar pb-3">
+          {/* Attractive gradient category grid */}
+          <div className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 lg:grid-cols-8 gap-2.5 sm:gap-4 px-1">
             {HERO_CATEGORIES.map(cat => (
               <div
                 key={cat.name}
-                className="w-full md:shrink-0 md:w-60 rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex flex-col bg-white group hover:shadow-lg transition-all duration-300 cursor-pointer"
                 onClick={() => navigate(cat.path)}
+                className="rounded-2xl overflow-hidden flex flex-col items-center justify-center cursor-pointer group hover:scale-[1.04] hover:shadow-xl transition-all duration-300 py-4 sm:py-5 px-3 select-none border border-black/5"
+                style={{ background: `linear-gradient(135deg, ${cat.from}, ${cat.to})` }}
               >
-                <div className="w-full h-24 sm:h-36 overflow-hidden relative">
-                  <img
-                    src={cat.image}
-                    alt={cat.name}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                    loading="lazy"
-                    onError={e => { (e.target as HTMLImageElement).src = `https://placehold.co/300x200/f0f9f4/007F2D?text=${encodeURIComponent(cat.name)}`; (e.target as HTMLImageElement).onerror = null; }}
-                  />
-                  <div className="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors" />
-                </div>
-                <div className="p-2 sm:p-4 text-center">
-                  <span className="font-bold text-[10px] sm:text-xs text-gray-800 uppercase tracking-wider">{cat.name}</span>
-                </div>
+                <span className="text-2xl sm:text-3xl mb-1.5 group-hover:scale-125 transition-transform duration-300">{cat.emoji}</span>
+                <span className="text-[10px] sm:text-xs font-extrabold text-center leading-tight px-1" style={{ color: cat.text }}>{cat.name}</span>
               </div>
             ))}
           </div>
@@ -205,41 +224,21 @@ const DashboardPage: React.FC = () => {
 
         {/* ── SHOP BY CATEGORIES (Matches Reference) ── */}
         <section className="mb-12">
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-primary-500 text-left mb-8">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-primary-600 text-left mb-8">
             Shop by categories
           </h1>
 
           {isLoading ? (
-            // Skeleton for each section (4 sections in SECTIONS)
-            SECTIONS.map((_, index) => (
-              <div key={index} className="mb-10">
-                {/* Skeleton for title and view more button */}
-                <div className="flex items-center justify-between mb-4 border-b border-gray-100 pb-2">
-                  <div className="h-6 w-40 bg-gray-100 animate-pulse rounded-md" />
-                  <div className="h-4 w-20 bg-gray-100 animate-pulse rounded-md" />
-                </div>
-                {/* Skeleton for items */}
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6">
-                  {[1, 2, 3, 4].map(n => (
-                    <div key={n} className="flex flex-col bg-white border border-gray-100 rounded-lg sm:rounded-xl overflow-hidden shadow-sm">
-                      <div className="aspect-[4/3] w-full bg-gray-100 animate-pulse" />
-                      <div className="p-2 sm:p-4 flex items-center justify-center bg-white min-h-[50px]">
-                        <div className="h-4 w-3/4 bg-gray-100 animate-pulse rounded-md" />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))
+            <Loader text="Loading categories..." />
           ) : (
             SECTIONS.map(section => (
               <div key={section.title} className="mb-10">
                 {/* Added bottom border and distinct coloring to match references */}
                 <div className="flex items-center justify-between mb-4 border-b border-gray-100 pb-2">
-                  <h2 className="text-base sm:text-lg font-bold text-primary-500">{section.title}</h2>
+                  <h2 className="text-base sm:text-lg font-bold text-primary-600">{section.title}</h2>
                   <button
                     onClick={() => navigate(`/category/${encodeURIComponent(section.title)}/subcategories`)}
-                    className="text-primary-500 text-[10px] sm:text-xs font-bold hover:underline"
+                    className="text-primary-600 text-[10px] sm:text-xs font-bold hover:underline"
                   >
                     View More
                   </button>
@@ -302,11 +301,7 @@ const DashboardPage: React.FC = () => {
           </div>
 
           {isLoading ? (
-            <div className="flex gap-4 overflow-x-hidden">
-              {[1, 2, 3, 4, 5].map(n => (
-                <div key={n} className="w-48 sm:w-52 h-[280px] bg-gray-100 animate-pulse rounded-xl shrink-0" />
-              ))}
-            </div>
+            <Loader text="Loading trending products..." />
           ) : (
             <div ref={carouselRef} className="flex gap-4 overflow-x-auto no-scrollbar pb-2">
               {featuredProducts.length > 0 ? (
@@ -343,13 +338,13 @@ const DashboardPage: React.FC = () => {
 
         {/* ── APP PROMO BANNER (matches reference) ── */}
         <section className="mb-12">
-          <div className="bg-primary-500 rounded-2xl sm:rounded-3xl overflow-hidden relative">
+          <div className="bg-gradient-to-r from-storewave-secondary to-primary-500 rounded-2xl sm:rounded-3xl overflow-hidden relative">
             <div className="flex flex-col md:flex-row items-center justify-between px-8 py-10 gap-8">
               <div className="text-white z-10 text-center md:text-left">
                 <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-2">
                   Shop Faster With<br />StoreWave App
                 </h2>
-                <p className="text-green-100 text-sm mb-6">Available on both iOS & Android</p>
+                <p className="text-blue-100 text-sm mb-6">Available on both iOS & Android</p>
                 <div className="flex gap-4 justify-center md:justify-start">
                   {/* App Store Button */}
                   <a href="#" className="bg-black text-white px-5 py-3 rounded-xl flex items-center gap-2.5 hover:bg-gray-900 transition-colors">
@@ -379,9 +374,9 @@ const DashboardPage: React.FC = () => {
         <section className="mb-8">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {[
-              { icon: '💰', bg: 'bg-green-50', title: 'Best Prices & Deals', desc: "Don't miss our daily amazing deals and prices" },
-              { icon: '🔄', bg: 'bg-blue-50', title: 'Refundable', desc: 'If your items have issues, we refund easily' },
-              { icon: '🚚', bg: 'bg-orange-50', title: 'Free Delivery', desc: 'On orders above ₹499 in specific areas' },
+              { icon: '💰', bg: 'bg-primary-50', title: 'Best Prices & Deals', desc: "Don't miss our daily amazing deals and prices" },
+              { icon: '🔄', bg: 'bg-primary-50', title: 'Refundable', desc: 'If your items have issues, we refund easily' },
+              { icon: '🚚', bg: 'bg-primary-50', title: 'Free Delivery', desc: 'On orders above ₹499 in specific areas' },
             ].map(s => (
               <div key={s.title} className="flex items-center gap-4 bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
                 <div className={`w-12 h-12 ${s.bg} rounded-xl flex items-center justify-center text-2xl shrink-0`}>{s.icon}</div>

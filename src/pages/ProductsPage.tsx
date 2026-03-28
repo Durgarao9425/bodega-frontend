@@ -5,32 +5,16 @@ import { Product } from '../types';
 import ProductCard from '../components/ProductCard';
 import LoginModal from '../components/LoginModal';
 import { useWishlist } from '../context/WishlistContext';
+import Loader from '../components/Loader';
 
 interface ProductsPageProps {
   isWishlist?: boolean;
 }
 
-const Skeleton: React.FC = () => (
-  <div className="bg-white rounded-xl border border-gray-100 p-3 h-64 flex flex-col gap-3 animate-pulse">
-    <div className="w-full h-32 bg-gray-50 rounded-lg"></div>
-    <div className="w-2/3 h-4 bg-gray-100 rounded"></div>
-    <div className="w-full h-4 bg-gray-100 rounded"></div>
-    <div className="mt-auto w-full h-8 bg-gray-100 rounded-lg"></div>
-  </div>
-);
 
-// Category structure — subcategory names match EXACT values in MongoDB
+// Category structure — subcategory names match EXACT values in backend subsPerCat.json / MongoDB
 const CATEGORY_STRUCTURE: Record<string, string[]> = {
   'All': [],
-  'Households': [
-    'Breakfast & cereals',
-    'Detergents & Cleaning',
-    'Facewash & skincare',
-    'Hair care',
-    'Oral care',
-    'Pasta & noodles',
-    'Soaps & body wash',
-  ],
   'Fruits & Vegetables': ['Vegetables', 'Fruits', 'Fresh Fruits'],
   'Groceries': [
     'Aata, maida, besan & sooji',
@@ -39,8 +23,19 @@ const CATEGORY_STRUCTURE: Record<string, string[]> = {
     'Oil & Ghee',
     'Rice, Poha & Sabhudana',
   ],
+  'Dairy & Eggs': ['Milk', 'Butter & Cheese', 'Eggs'],
+  'Beverages': ['Cold Drinks', 'Juices'],
+  'Bakery': ['Biscuits', 'Bread'],
+  'Snacks': ['Biscuits', 'Namkeen', 'Chocolates'], // Matches user mental model
   'Dry Fruits': ['Premium Nuts'],
-  'Testing cat': ['Other Items'],
+  'Households': [
+    'Breakfast & cereals',
+    'Detergents & Cleaning',
+    'Facewash & skincare',
+    'Hair care',
+    'Oral care',
+    'Pooja Items',
+  ],
 };
 
 const MAIN_CATEGORIES = Object.keys(CATEGORY_STRUCTURE);
@@ -123,10 +118,38 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ isWishlist }) => {
       );
     } else {
       // Category / subcategory filter
-      if (activeCategory && activeCategory !== 'All') {
-        filtered = filtered.filter(p => (p.category || '').toLowerCase() === activeCategory.toLowerCase());
+      if (activeCategory && activeCategory !== 'All' && !activeSubcategory) {
+        // If a main category is clicked, show products matching the category name 
+        // OR products belonging to any of the associated sub-categories defined for this category.
+        const subsInStructure = CATEGORY_STRUCTURE[activeCategory] || [];
+        filtered = filtered.filter(p => {
+          // ─── ROBUST CATEGORY MATCHING ───
+          // Normalize both for case-insensitive comparison
+          const productCat = (p.category || '').toLowerCase().trim();
+          const targetCat = activeCategory.toLowerCase().trim();
+          const productSub = (p.subcategory || '').toLowerCase().trim();
+          
+          // 1. Exact match (case-insensitive)
+          if (productCat === targetCat) return true;
+          
+          // 2. Handle known database aliases / common misspellings reported by user
+          // Matching 'Bakery' vs 'bakary', 'Snacks' vs 'snaks', etc.
+          if (targetCat === 'bakery' && productCat === 'bakary') return true;
+          if (targetCat === 'snacks' && productCat === 'snaks') return true;
+          
+          // Handle 'Dairy & Eggs' variations (e.g., 'dairy,eggs' or just 'dairy')
+          if (targetCat === 'dairy & eggs') {
+            const dairyVariations = ['dairy & eggs', 'dairy,eggs', 'dairy', 'eggs'];
+            if (dairyVariations.includes(productCat)) return true;
+          }
+
+          // 3. Match subcategory strings within this parent category's structure
+          return subsInStructure.some(s => s.toLowerCase().trim() === productSub);
+        });
       }
+      
       if (activeSubcategory) {
+        // If a subcategory is selected, show products in that subcategory across any parent category
         filtered = filtered.filter(p => {
           const productSub = (p.subcategory || '').toLowerCase().trim();
           const filterSub = activeSubcategory.toLowerCase().trim();
@@ -143,7 +166,6 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ isWishlist }) => {
     else if (sortBy === 'price_desc') filtered.sort((a, b) => b.price - a.price);
     else if (sortBy === 'name') filtered.sort((a, b) => a.name.localeCompare(b.name));
 
-    console.log('🔍 Filtering:', { activeCategory, activeSubcategory, total: allProducts.length, found: filtered.length });
     setProducts(filtered);
     setIsLoading(false);
   }, [allProducts, isWishlist, searchQuery, activeCategory, activeSubcategory, priceRange, sortBy, wishlistItems]);
@@ -176,14 +198,14 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ isWishlist }) => {
         {/* Breadcrumb + Sort */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-5">
           <div className="flex items-center gap-2 text-sm text-gray-500">
-            <Link to="/" className="hover:text-[#0ea5e9] font-medium">Home</Link>
+            <Link to="/" className="hover:text-primary-500 font-medium">Home</Link>
             <span>›</span>
             {isWishlist ? (
-              <span className="text-[#0ea5e9] font-bold">My Wishlist ❤️</span>
+              <span className="text-primary-500 font-bold">My Wishlist ❤️</span>
             ) : searchQuery ? (
-              <span className="text-[#0ea5e9] font-bold">Search: "{searchQuery}"</span>
+              <span className="text-primary-500 font-bold">Search: "{searchQuery}"</span>
             ) : (
-              <span className="text-[#0ea5e9] font-bold">{activeCategory}</span>
+              <span className="text-primary-500 font-bold">{activeCategory}</span>
             )}
           </div>
 
@@ -192,7 +214,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ isWishlist }) => {
             <select
               value={sortBy}
               onChange={e => setSortBy(e.target.value)}
-              className="text-xs sm:text-sm border border-gray-200 rounded-lg px-3 py-2 text-gray-700 outline-none focus:border-[#0ea5e9] cursor-pointer bg-white self-start sm:self-auto"
+              className="text-xs sm:text-sm border border-gray-200 rounded-lg px-3 py-2 text-gray-700 outline-none focus:border-primary-500 cursor-pointer bg-white self-start sm:self-auto"
             >
               <option value="default">Sort: Relevance</option>
               <option value="price_asc">Price: Low → High</option>
@@ -217,8 +239,8 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ isWishlist }) => {
                       key={cat}
                       onClick={() => handleCategoryClick(cat)}
                       className={`w-full text-left text-xs font-medium py-2 px-3 rounded-lg transition-colors ${activeCategory === cat
-                          ? 'bg-[#0ea5e9] text-white font-bold'
-                          : 'text-gray-600 hover:bg-green-50 hover:text-[#0ea5e9]'
+                          ? 'bg-primary-500 text-white font-bold'
+                          : 'text-gray-600 hover:bg-primary-50 hover:text-primary-500'
                         }`}
                     >
                       {cat}
@@ -227,31 +249,44 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ isWishlist }) => {
                 </div>
               </div>
 
-              {/* Subcategory filter */}
-              {CATEGORY_STRUCTURE[activeCategory]?.length > 0 && (
+              {/* Subcategory filter - Enhanced to show subs even for "All" */}
+              {(CATEGORY_STRUCTURE[activeCategory]?.length > 0 || activeCategory === 'All') && (
                 <div className="p-4 border-b border-gray-100">
-                  <h3 className="font-bold text-gray-700 text-xs uppercase tracking-widest mb-3">Sub-Categories</h3>
-                  <div className="space-y-1.5">
+                  <h3 className="font-bold text-gray-700 text-[10px] uppercase tracking-widest mb-3 opacity-60">Sub-Categories</h3>
+                  <div className="space-y-2">
                     <label className="flex items-center gap-2 cursor-pointer group">
-                      <input
-                        type="radio"
-                        name="subcategory"
-                        checked={activeSubcategory === ''}
-                        onChange={() => setActiveSubcategory('')}
-                        className="accent-[#0ea5e9]"
-                      />
-                      <span className="text-xs font-medium text-gray-600 group-hover:text-gray-900">All</span>
-                    </label>
-                    {CATEGORY_STRUCTURE[activeCategory].map(sub => (
-                      <label key={sub} className="flex items-center gap-2 cursor-pointer group">
+                      <div className="relative flex items-center justify-center">
                         <input
                           type="radio"
                           name="subcategory"
-                          checked={activeSubcategory === sub}
-                          onChange={() => setActiveSubcategory(sub)}
-                          className="accent-[#0ea5e9]"
+                          checked={activeSubcategory === ''}
+                          onChange={() => setActiveSubcategory('')}
+                          className="w-4 h-4 border-2 border-gray-300 rounded-full appearance-none checked:border-primary-500 checked:bg-primary-500 focus:outline-none transition-all cursor-pointer"
                         />
-                        <span className={`text-xs font-medium ${activeSubcategory === sub ? 'text-[#0ea5e9]' : 'text-gray-600 group-hover:text-gray-900'}`}>
+                        {activeSubcategory === '' && (
+                          <div className="absolute w-1.5 h-1.5 bg-white rounded-full"></div>
+                        )}
+                      </div>
+                      <span className={`text-xs font-bold leading-none ${activeSubcategory === '' ? 'text-primary-600' : 'text-gray-500 group-hover:text-gray-900'}`}>All</span>
+                    </label>
+                    {(activeCategory === 'All' 
+                      ? ['Milk', 'Butter & Cheese', 'Vegetables', 'Fruits', 'Fresh Fruits', 'Aata, maida, besan & sooji', 'Dals, Pulses & Grains', 'Masala & Spices', 'Bread', 'Biscuits']
+                      : CATEGORY_STRUCTURE[activeCategory]
+                    ).map(sub => (
+                      <label key={sub} className="flex items-center gap-2 cursor-pointer group">
+                        <div className="relative flex items-center justify-center">
+                          <input
+                            type="radio"
+                            name="subcategory"
+                            checked={activeSubcategory === sub}
+                            onChange={() => setActiveSubcategory(sub)}
+                            className="w-4 h-4 border-2 border-gray-300 rounded-full appearance-none checked:border-primary-500 checked:bg-primary-500 focus:outline-none transition-all cursor-pointer"
+                          />
+                          {activeSubcategory === sub && (
+                            <div className="absolute w-1.5 h-1.5 bg-white rounded-full"></div>
+                          )}
+                        </div>
+                        <span className={`text-[13px] font-bold leading-none ${activeSubcategory === sub ? 'text-primary-600' : 'text-gray-500 group-hover:text-gray-900'}`}>
                           {sub}
                         </span>
                       </label>
@@ -265,10 +300,10 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ isWishlist }) => {
                 <div className="flex justify-between items-center mb-3">
                   <h3 className="font-bold text-gray-700 text-xs uppercase tracking-widest">Price Range</h3>
                   <div className="flex items-center gap-3">
-                    <span className="text-xs font-bold text-[#0ea5e9]">Up to ₹{priceRange}</span>
+                    <span className="text-xs font-bold text-primary-500">Up to ₹{priceRange.toFixed(2)}</span>
                     <button
                       onClick={resetFilters}
-                      className="text-[9px] uppercase font-bold text-[#0ea5e9] border border-[#0ea5e9] px-2 py-0.5 rounded hover:bg-[#0ea5e9] hover:text-white transition-colors"
+                      className="text-[9px] uppercase font-bold text-primary-500 border border-primary-500 px-2 py-0.5 rounded hover:bg-primary-500 hover:text-white transition-colors"
                     >
                       Reset
                     </button>
@@ -285,12 +320,12 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ isWishlist }) => {
                   onChange={e => setPriceRange(parseInt(e.target.value))}
                   className="price-slider w-full mb-3"
                   style={{
-                    background: `linear-gradient(to right, #0ea5e9 ${sliderFill}%, #d1d5db ${sliderFill}%)`
+                    background: `linear-gradient(to right, var(--color-primary-500) ${sliderFill}%, #d1d5db ${sliderFill}%)`
                   }}
                 />
                 <div className="flex items-center justify-between text-xs font-bold text-gray-700">
-                  <span className="bg-gray-100 px-2 py-1 rounded">₹0</span>
-                  <span className="text-[#0ea5e9]">₹{priceRange.toLocaleString()}</span>
+                  <span className="bg-gray-100 px-2 py-1 rounded">₹0.00</span>
+                  <span className="text-primary-500">₹{priceRange.toFixed(2)}</span>
                 </div>
               </div>
             </aside>
@@ -307,9 +342,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ isWishlist }) => {
             )}
 
             {isLoading ? (
-              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
-                {[1, 2, 3, 4, 5, 6, 7, 8].map(n => <Skeleton key={n} />)}
-              </div>
+              <Loader text="Loading products..." />
             ) : products.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-16 px-6 text-center bg-gray-50 rounded-2xl border border-gray-100 min-h-[220px]">
                 <span className="text-5xl mb-4">{isWishlist ? '💔' : '📦'}</span>
@@ -325,7 +358,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ isWishlist }) => {
                 </p>
                 <button
                   onClick={() => navigate('/products')}
-                  className="bg-[#0ea5e9] text-white px-6 py-2.5 rounded-xl font-bold shadow-md hover:bg-[#0284c7] transition-colors text-sm"
+                  className="bg-primary-500 text-white px-6 py-2.5 rounded-xl font-bold shadow-md hover:bg-primary-600 transition-colors text-sm"
                 >
                   Browse All Products
                 </button>
@@ -347,7 +380,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ isWishlist }) => {
                   <div className="flex justify-center pt-4 pb-8">
                     <button
                       onClick={() => setVisibleItemsCount(prev => prev + 10)}
-                      className="group flex items-center gap-2 bg-white border-2 border-[#0ea5e9] text-[#0ea5e9] font-bold px-8 py-3 rounded-xl hover:bg-[#0ea5e9] hover:text-white transition-all duration-300 shadow-md hover:shadow-lg"
+                      className="group flex items-center gap-2 bg-white border-2 border-primary-500 text-primary-500 font-bold px-8 py-3 rounded-xl hover:bg-primary-500 hover:text-white transition-all duration-300 shadow-md hover:shadow-lg"
                     >
                       Load More
                       <svg 

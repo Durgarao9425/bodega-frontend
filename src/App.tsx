@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import { WishlistProvider } from './context/WishlistContext';
+import { ThemeProvider } from './context/ThemeContext';
 import { useAuth } from './context/AuthContext';
 
 // Import Components
@@ -21,6 +22,9 @@ import ProductDetailPage from './pages/ProductDetailPage';
 import CartPage from './pages/CartPage';
 import ProfilePage from './pages/ProfilePage';
 import SubcategoriesPage from './pages/SubcategoriesPage';
+import TrackOrderPage from './pages/TrackOrderPage';
+import OrderSuccessPage from './pages/OrderSuccessPage';
+import { PrivacyPolicyPage, TermsPage, RefundPolicyPage, ShippingPolicyPage, ContactPage, AboutPage } from './pages/StaticPages';
 
 // Inner component that uses auth context for global loader
 const AppRoutes: React.FC = () => {
@@ -78,6 +82,27 @@ const AppRoutes: React.FC = () => {
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/track-order"
+              element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <TrackOrderPage />
+                  </MainLayout>
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Order Success */}
+            <Route path="/order-success" element={<MainLayout><OrderSuccessPage /></MainLayout>} />
+
+            {/* Static / Info Pages */}
+            <Route path="/privacy-policy" element={<MainLayout><PrivacyPolicyPage /></MainLayout>} />
+            <Route path="/terms" element={<MainLayout><TermsPage /></MainLayout>} />
+            <Route path="/refund-policy" element={<MainLayout><RefundPolicyPage /></MainLayout>} />
+            <Route path="/shipping-policy" element={<MainLayout><ShippingPolicyPage /></MainLayout>} />
+            <Route path="/contact" element={<MainLayout><ContactPage /></MainLayout>} />
+            <Route path="/about" element={<MainLayout><AboutPage /></MainLayout>} />
 
             {/* Redirects */}
             <Route path="/dashboard" element={<Navigate to="/" replace />} />
@@ -91,9 +116,11 @@ const AppRoutes: React.FC = () => {
 
 const App: React.FC = () => {
   return (
-    <AuthProvider>
-      <AppRoutes />
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <AppRoutes />
+      </AuthProvider>
+    </ThemeProvider>
   );
 };
 

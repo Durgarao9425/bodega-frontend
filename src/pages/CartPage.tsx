@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import Header from '../components/Header';
+import Loader from '../components/Loader';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
@@ -17,10 +18,13 @@ const CartPage: React.FC = () => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isSavingAddress, setIsSavingAddress] = useState(false);
+  const [isAddressLoading, setIsAddressLoading] = useState(true);
   const [toast, setToast] = useState<{ msg: string; type: 'success' | 'error' | 'info' | '' }>({ msg: '', type: '' });
   const [formData, setFormData] = useState({
     fullName: '', mobile: '', addressLine1: '', flatNo: '', type: 'Home'
   });
+  const [paymentMethod, setPaymentMethod] = useState<'Razorpay' | 'COD'>('Razorpay');
 
   const showToast = (msg: string, type: 'success' | 'error' | 'info' = 'success') => {
     setToast({ msg, type });
@@ -29,36 +33,41 @@ const CartPage: React.FC = () => {
 
   useEffect(() => {
     if (user) {
+      setIsAddressLoading(true);
       api.get('/user/addresses').then(res => {
         setAddresses(res.data.addresses || []);
         if (res.data.addresses?.length > 0) {
           setSelectedAddressId(res.data.addresses[0]._id);
         }
-      }).catch(console.error);
+      }).catch(console.error).finally(() => setIsAddressLoading(false));
+    } else {
+      setIsAddressLoading(false);
     }
   }, [user]);
 
   const handleSaveAddress = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return showToast('Please login to save address', 'error');
+    if (isSavingAddress) return; // prevent double submit
+    setIsSavingAddress(true);
     try {
       const res = await api.post('/user/address', formData);
       setAddresses(res.data.addresses);
       setSelectedAddressId(res.data.addresses[res.data.addresses.length - 1]._id);
       setShowAddModal(false);
       setFormData({ fullName: '', mobile: '', addressLine1: '', flatNo: '', type: 'Home' });
-      showToast('Address saved successfully!', 'success');
+      showToast('Address saved successfully! 🏠', 'success');
     } catch {
-      showToast('Failed to save address', 'error');
+      showToast('Failed to save address. Please try again.', 'error');
+    } finally {
+      setIsSavingAddress(false);
     }
   };
 
   if (isCartLoading && !cart) {
     return (
-      <div className="bg-gray-50 flex flex-col">
-        <main className="max-w-[1200px] mx-auto px-4 py-8 w-full flex-1">
-          <div className="h-8 w-48 bg-gray-200 animate-pulse rounded mb-6" />
-        </main>
+      <div className="bg-gray-50 flex flex-col min-h-screen items-center justify-center">
+        <Loader text="Loading your cart..." size="lg" />
       </div>
     );
   }
@@ -69,7 +78,7 @@ const CartPage: React.FC = () => {
         <div className="flex-1 flex flex-col items-center justify-center py-20 px-4 text-center">
           <div className="text-7xl mb-6 opacity-40">🛒</div>
           <h2 className="text-xl font-bold text-gray-800 mb-2">Your cart is empty</h2>
-          <button onClick={() => navigate('/products')} className="bg-[#0ea5e9] text-white font-bold px-8 py-3 rounded-xl hover:bg-[#0284c7] mt-5">
+          <button onClick={() => navigate('/products')} className="bg-primary-500 text-white font-bold px-8 py-3 rounded-xl hover:bg-primary-600 mt-5">
             Start Shopping →
           </button>
         </div>
@@ -100,14 +109,62 @@ const CartPage: React.FC = () => {
         price: i.product.price || i.price,
         image: i.product.image
       }));
-      await api.post('/order/create', {
-        items, deliveryAddress: address, subTotal, deliveryFee: deliveryCharges, totalAmount: grandTotal, paymentMethod: 'Cash on Delivery'
-      });
-      clearCart();
-      setIsProcessing(false);
-      setShowConfirmModal(false);
-      showToast('Order created successfully! Redirecting...', 'success');
-      setTimeout(() => navigate('/profile'), 2000);
+
+      if (paymentMethod === 'Razorpay') {
+        const razorpayAmount = Math.round(Number(grandTotal.toFixed(2)) * 100);
+        
+        // Razorpay Live Test Integration
+        const options = {
+          key: 'rzp_test_SWMGlUfAqZEvOA', // StoreWave Test Key
+          amount: razorpayAmount,
+          currency: 'INR',
+          name: 'StoreWave',
+          description: 'Payment for your grocery order',
+          image: '', // optional logo URL
+          handler: async function (response: any) {
+            // Payment success — save to DB
+            const orderRes = await api.post('/order/create', {
+              items, deliveryAddress: address, subTotal, deliveryFee: deliveryCharges, totalAmount: grandTotal, paymentMethod: 'Razorpay', razorpayPaymentId: response.razorpay_payment_id
+            });
+            clearCart();
+            setIsProcessing(false);
+            setShowConfirmModal(false);
+            navigate('/order-success', { state: { order: orderRes.data, paymentId: response.razorpay_payment_id, method: 'Razorpay' } });
+          },
+          prefill: {
+            name: user?.name,
+            contact: user?.phone
+          },
+          notes: {
+            address: address?.addressLine1 || ''
+          },
+          theme: { color: 'var(--color-primary-600, #0f766e)' },
+          modal: {
+            ondismiss: () => {
+              setIsProcessing(false);
+              setShowConfirmModal(false);
+              showToast('Payment cancelled. Please try again.', 'info');
+            }
+          }
+        };
+        const rzp = new (window as any).Razorpay(options);
+        // Intercept payment failures — show toast instead of browser alert
+        rzp.on('payment.failed', (resp: any) => {
+          setIsProcessing(false);
+          setShowConfirmModal(false);
+          showToast(`Payment failed: ${resp.error?.description || 'Please try another method.'}`, 'error');
+        });
+        rzp.open();
+        setIsProcessing(false);
+      } else {
+          const orderRes = await api.post('/order/create', {
+            items, deliveryAddress: address, subTotal, deliveryFee: deliveryCharges, totalAmount: grandTotal, paymentMethod: 'Cash on Delivery'
+          });
+          clearCart();
+          setIsProcessing(false);
+          setShowConfirmModal(false);
+          navigate('/order-success', { state: { order: orderRes.data, method: 'Cash on Delivery' } });
+        }
     } catch (e: any) {
       console.error(e);
       showToast('Failed: ' + (e.response?.data?.error || e.message), 'error');
@@ -129,11 +186,11 @@ const CartPage: React.FC = () => {
 
       {/* GLOBAL TOAST */}
       {toast.msg && (
-        <div className={`fixed top-12 left-1/2 -translate-x-1/2 ${toast.type === 'success' ? 'bg-green-50 text-[#0ea5e9] border-green-200' : toast.type === 'error' ? 'bg-red-50 text-red-500 border-red-200' : 'bg-blue-50 text-blue-600 border-blue-200'} border px-8 py-4 rounded-2xl font-black text-base shadow-[0_20px_50px_rgba(0,0,0,0.15)] z-[999] animate-fade-in flex items-center gap-4 min-w-[320px]`}>
-          <span className="text-2xl">
+        <div className={`fixed top-20 left-1/2 -translate-x-1/2 ${toast.type === 'success' ? 'bg-primary-50 text-primary-600 border-primary-200' : toast.type === 'error' ? 'bg-red-50 text-red-500 border-red-200' : 'bg-blue-50 text-blue-600 border-blue-200'} border px-4 sm:px-8 py-3 sm:py-4 rounded-2xl font-black text-sm sm:text-base shadow-[0_20px_500px_rgba(0,0,0,0.15)] z-[999] animate-fade-in flex items-center gap-3 sm:gap-4 w-[92%] max-w-sm sm:min-w-[320px]`}>
+          <span className="text-xl sm:text-2xl shrink-0">
             {toast.type === 'success' ? '✅' : toast.type === 'error' ? '❌' : 'ℹ️'}
           </span>
-          {toast.msg}
+          <span className="leading-tight">{toast.msg}</span>
         </div>
       )}
 
@@ -157,8 +214,8 @@ const CartPage: React.FC = () => {
                   <p className="font-bold text-gray-800 text-sm truncate">{item.product.name}</p>
                   <p className="text-xs text-gray-400 mb-1">{item.product.unit}</p>
                   <div className="flex items-center gap-2">
-                    <span className="text-xs text-gray-400 line-through">₹{item.product.originalPrice}</span>
-                    <span className="font-bold text-[#0ea5e9] text-sm">₹{item.product?.price || item.price}</span>
+                    <span className="text-xs text-gray-400 line-through">₹{(item.product.originalPrice || 0).toFixed(2)}</span>
+                    <span className="font-bold text-primary-600 text-sm">₹{(item.product?.price || item.price).toFixed(2)}</span>
                   </div>
                 </div>
 
@@ -185,7 +242,7 @@ const CartPage: React.FC = () => {
           {deliveryCharges === 0 && (
             <div className="bg-green-50 border border-green-100 p-3 rounded-lg flex items-center gap-2 mb-6">
               <span>🎉</span>
-              <p className="text-[#0ea5e9] font-bold text-xs uppercase tracking-wide">Congratulations! You've unlocked FREE DELIVERY ✨</p>
+              <p className="text-primary-600 font-bold text-xs uppercase tracking-wide">Congratulations! You've unlocked FREE DELIVERY ✨</p>
             </div>
           )}
 
@@ -207,7 +264,7 @@ const CartPage: React.FC = () => {
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600 font-medium">Delivery Charges</span>
-                <span className="font-bold text-gray-800">{deliveryCharges === 0 ? 'Free' : `₹${deliveryCharges}`}</span>
+                <span className="font-bold text-gray-800">{deliveryCharges === 0 ? 'Free' : `₹${deliveryCharges.toFixed(2)}`}</span>
               </div>
             </div>
             <div className="flex justify-between items-center mb-6 px-4">
@@ -216,92 +273,129 @@ const CartPage: React.FC = () => {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4">
-              <Link to="/products" className="border border-[#0ea5e9] text-[#0ea5e9] font-bold py-3 px-6 rounded-xl hover:bg-green-50 text-center flex-1 text-sm flex items-center justify-center gap-2">
+              <Link to="/products" className="border border-primary-500 text-primary-600 font-bold py-3 px-6 rounded-xl hover:bg-primary-50 text-center flex-1 text-sm flex items-center justify-center gap-2">
                 + Add More items
               </Link>
-              <button onClick={handleCheckoutClick} className="bg-[#0ea5e9] text-white font-bold py-3 px-6 rounded-xl hover:bg-[#0284c7] text-center flex-1 focus:ring-4 focus:ring-green-100 transition-colors shadow-lg active:scale-95 text-lg">
+              <button onClick={handleCheckoutClick} className="bg-primary-500 text-white font-bold py-3 px-6 rounded-xl hover:bg-primary-600 text-center flex-1 focus:ring-4 focus:ring-primary-100 transition-colors shadow-lg active:scale-95 text-lg">
                 Checkout
               </button>
             </div>
           </div>
         </div>
 
-        {/* RIGHT COLUMN: Addresses */}
-        <div className="w-full lg:w-[40%]">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-bold text-gray-800">My Addresses</h2>
-            <button onClick={() => setShowAddModal(true)} className="text-[#0ea5e9] text-sm font-bold hover:underline flex items-center gap-1">
-              + Add Address
-            </button>
+        {/* RIGHT COLUMN: Addresses & Payment */}
+        <div className="w-full lg:w-[40%] space-y-8">
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-bold text-gray-800">My Addresses</h2>
+              <button onClick={() => setShowAddModal(true)} className="text-primary-500 text-sm font-bold hover:underline flex items-center gap-1">
+                + Add Address
+              </button>
+            </div>
+
+            {isAddressLoading ? (
+              <Loader text="Loading addresses..." />
+            ) : !user ? (
+              <div className="border-2 border-dashed border-gray-200 rounded-xl p-8 flex flex-col items-center justify-center bg-gray-50 h-48">
+                <p className="text-sm text-gray-500 font-medium text-center">Please login to add a delivery address.</p>
+              </div>
+            ) : addresses.length === 0 ? (
+              <div className="border-2 border-dashed border-primary-200 rounded-xl p-8 flex flex-col items-center justify-center bg-primary-50/30 text-center h-48 cursor-pointer hover:bg-primary-50 transition-colors" onClick={() => setShowAddModal(true)}>
+                <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm mb-3 text-2xl">📍</div>
+                <p className="font-bold text-gray-800 mb-1">No Address Added Yet</p>
+                <p className="text-[11px] text-gray-500 px-4">Please add a delivery address to proceed with checkout and complete your order.</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {addresses.map(addr => (
+                  <div
+                    key={addr._id}
+                    onClick={() => setSelectedAddressId(addr._id)}
+                    className={`border rounded-xl p-4 cursor-pointer relative flex gap-3 transition-all ${selectedAddressId === addr._id ? 'border-primary-500 bg-primary-50 shadow-sm ring-1 ring-primary-500/20' : 'border-gray-200 bg-white hover:border-gray-300'}`}
+                  >
+                    <div className="pt-1 select-none">
+                      <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${selectedAddressId === addr._id ? 'border-primary-500 bg-primary-500' : 'border-gray-300 bg-white'}`}>
+                        {selectedAddressId === addr._id && <div className="w-2 h-2 rounded-full bg-white" />}
+                      </div>
+                    </div>
+                    <div>
+                      <p className="font-bold text-sm text-gray-800 mb-1">{addr.fullName} <span className="text-gray-400 font-normal">({addr.mobile})</span> | <span className="font-bold text-primary-600">{addr.type}</span></p>
+                      <p className="text-xs text-gray-500 leading-tight pr-6 relative font-medium">{addr.flatNo}, {addr.addressLine1}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
-          {!user ? (
-            <div className="border-2 border-dashed border-gray-200 rounded-xl p-8 flex flex-col items-center justify-center bg-gray-50 h-48">
-              <p className="text-sm text-gray-500 font-medium text-center">Please login to add a delivery address.</p>
-            </div>
-          ) : addresses.length === 0 ? (
-            <div className="border-2 border-dashed border-[#8bc5a0] rounded-xl p-8 flex flex-col items-center justify-center bg-[#f7fcf9] text-center h-48 cursor-pointer hover:bg-green-50" onClick={() => setShowAddModal(true)}>
-              <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm mb-3 text-2xl">📦</div>
-              <p className="font-bold text-gray-800 mb-1">No Address Added Yet</p>
-              <p className="text-[11px] text-gray-500 px-4">Please add a delivery address to proceed with checkout and complete your order.</p>
-            </div>
-          ) : (
+          <div>
+            <h2 className="text-lg font-bold text-gray-800 mb-4">Payment Method</h2>
             <div className="space-y-3">
-              {addresses.map(addr => (
+              {[
+                { id: 'Razorpay', label: 'Online Payment', icon: '💳', desc: 'UPI, Cards, Netbanking (Secure)' },
+                { id: 'COD', label: 'Cash on Delivery', icon: '💵', desc: 'Pay when your groceries arrive' },
+              ].map(method => (
                 <div
-                  key={addr._id}
-                  onClick={() => setSelectedAddressId(addr._id)}
-                  className={`border rounded-xl p-4 cursor-pointer relative flex gap-3 ${selectedAddressId === addr._id ? 'border-[#0ea5e9] bg-[#f7fcf9]' : 'border-gray-200 bg-white hover:border-gray-300'}`}
+                  key={method.id}
+                  onClick={() => setPaymentMethod(method.id as any)}
+                  className={`border rounded-xl p-4 cursor-pointer flex gap-4 transition-all items-center ${paymentMethod === method.id ? 'border-primary-500 bg-primary-50 shadow-sm ring-1 ring-primary-500/20' : 'border-gray-200 bg-white hover:border-gray-300'}`}
                 >
-                  <div className="pt-1 select-none">
-                    <input type="radio" checked={selectedAddressId === addr._id} readOnly className="accent-[#0ea5e9] w-4 h-4" />
+                  <div className="text-2xl">{method.icon}</div>
+                  <div className="flex-1">
+                    <p className="font-bold text-sm text-gray-800">{method.label}</p>
+                    <p className="text-[10px] text-gray-500 font-medium">{method.desc}</p>
                   </div>
-                  <div>
-                    <p className="font-bold text-sm text-gray-800 mb-1">{addr.fullName} <span className="text-gray-400 font-normal">({addr.mobile})</span> | <span className="font-bold">{addr.type}</span></p>
-                    <p className="text-xs text-gray-500 leading-tight pr-6 relative">{addr.flatNo}, {addr.addressLine1}</p>
-                    <div className="absolute right-4 top-4 flex gap-2">
-                      <button className="text-[#0ea5e9] hover:scale-110">✏️</button>
-                    </div>
+                  <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${paymentMethod === method.id ? 'border-primary-500 bg-primary-500' : 'border-gray-300 bg-white'}`}>
+                    {paymentMethod === method.id && <div className="w-2 h-2 rounded-full bg-white" />}
                   </div>
                 </div>
               ))}
             </div>
-          )}
+          </div>
         </div>
       </main>
 
       {/* ── Add Address Modal ── */}
       {showAddModal && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl w-full max-w-3xl shadow-2xl p-6 relative overflow-y-auto max-h-[90vh]">
-            <h2 className="text-[#0ea5e9] text-lg font-bold mb-6">Add Address</h2>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl w-full max-w-2xl shadow-2xl p-8 relative overflow-y-auto max-h-[90vh]">
+            {/* Header */}
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-primary-600 text-2xl font-black">Add New Address</h2>
+              <button
+                type="button"
+                onClick={() => !isSavingAddress && setShowAddModal(false)}
+                disabled={isSavingAddress}
+                className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-gray-200 transition-colors disabled:opacity-40"
+              >
+                ✕
+              </button>
+            </div>
             <form onSubmit={handleSaveAddress} className="space-y-5">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div>
                   <label className="text-xs font-bold text-gray-600 mb-1.5 block">Full Name *</label>
-                  <input required placeholder="Enter your name" className="w-full border p-2.5 rounded focus:border-[#0ea5e9] outline-none text-sm" value={formData.fullName} onChange={e => setFormData({ ...formData, fullName: e.target.value })} />
+                  <input required placeholder="Enter your name" className="w-full border-2 border-gray-100 p-3 rounded-xl focus:border-primary-500 outline-none text-sm font-bold transition-all" value={formData.fullName} onChange={e => setFormData({ ...formData, fullName: e.target.value })} />
                 </div>
                 <div>
-                  <label className="text-xs font-bold text-gray-600 mb-1.5 block">Mobile *</label>
-                  <input required placeholder="10 digit mobile number" className="w-full border p-2.5 rounded focus:border-[#0ea5e9] outline-none text-sm" value={formData.mobile} onChange={e => setFormData({ ...formData, mobile: e.target.value })} />
+                  <label className="text-xs font-bold text-gray-500 uppercase mb-2 block">Mobile *</label>
+                  <input required placeholder="10 digit mobile number" className="w-full border-2 border-gray-100 p-3 rounded-xl focus:border-primary-500 outline-none text-sm font-bold transition-all" value={formData.mobile} onChange={e => setFormData({ ...formData, mobile: e.target.value })} />
                 </div>
               </div>
 
               <div>
-                <label className="text-xs font-bold text-gray-600 mb-1.5 block">Address *</label>
-                <input required placeholder="Area, Street, Sector, Village" className="w-full border p-2.5 rounded focus:border-[#0ea5e9] outline-none text-sm" value={formData.addressLine1} onChange={e => setFormData({ ...formData, addressLine1: e.target.value })} />
+                <label className="text-xs font-bold text-gray-500 uppercase mb-2 block">Address *</label>
+                <input required placeholder="Area, Street, Sector, Village" className="w-full border-2 border-gray-100 p-3 rounded-xl focus:border-primary-500 outline-none text-sm font-bold transition-all" value={formData.addressLine1} onChange={e => setFormData({ ...formData, addressLine1: e.target.value })} />
               </div>
-
-
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div>
-                  <label className="text-xs font-bold text-gray-600 mb-1.5 block">Flat No / House No /Building No *</label>
-                  <input required placeholder="" className="w-full border border-green-400 p-2.5 rounded focus:border-[#0ea5e9] outline-none text-sm" value={formData.flatNo} onChange={e => setFormData({ ...formData, flatNo: e.target.value })} />
+                  <label className="text-xs font-bold text-gray-500 uppercase mb-2 block">Flat / Building No *</label>
+                  <input required className="w-full border-2 border-gray-100 p-3 rounded-xl focus:border-primary-500 outline-none text-sm font-bold transition-all" value={formData.flatNo} onChange={e => setFormData({ ...formData, flatNo: e.target.value })} />
                 </div>
                 <div>
-                  <label className="text-xs font-bold text-gray-600 mb-1.5 block">Type *</label>
-                  <select className="w-full border p-2.5 rounded focus:border-[#0ea5e9] outline-none text-sm bg-white" value={formData.type} onChange={e => setFormData({ ...formData, type: e.target.value })}>
+                  <label className="text-xs font-bold text-gray-500 uppercase mb-2 block">Address Type *</label>
+                  <select className="w-full border-2 border-gray-100 p-3 rounded-xl focus:border-primary-500 outline-none text-sm bg-white font-bold transition-all cursor-pointer" value={formData.type} onChange={e => setFormData({ ...formData, type: e.target.value })}>
                     <option>Home</option>
                     <option>Office</option>
                     <option>Other</option>
@@ -310,8 +404,29 @@ const CartPage: React.FC = () => {
               </div>
 
               <div className="flex gap-4 pt-4">
-                <button type="submit" className="bg-[#0ea5e9] text-white px-8 py-2.5 rounded-lg font-bold hover:bg-[#0284c7]">SAVE</button>
-                <button type="button" onClick={() => setShowAddModal(false)} className="border border-[#0ea5e9] text-[#0ea5e9] px-8 py-2.5 rounded-lg font-bold hover:bg-green-50">Cancel</button>
+                {/* Save Button with Loading Spinner */}
+                <button
+                  type="submit"
+                  disabled={isSavingAddress}
+                  className="flex-1 bg-primary-500 text-white py-3 rounded-xl font-black hover:bg-primary-600 transition-all shadow-md disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+                >
+                  {isSavingAddress ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      Saving Address...
+                    </>
+                  ) : (
+                    'Save Address'
+                  )}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => !isSavingAddress && setShowAddModal(false)}
+                  disabled={isSavingAddress}
+                  className="flex-1 border-2 border-primary-500 text-primary-500 py-3 rounded-xl font-black hover:bg-primary-50 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  Cancel
+                </button>
               </div>
             </form>
           </div>
@@ -322,14 +437,14 @@ const CartPage: React.FC = () => {
       {showConfirmModal && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 animate-fade-in">
           <div className="bg-white rounded-2xl w-full max-w-sm shadow-2xl p-6 text-center transform inline-block">
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center text-[#0ea5e9] text-3xl mx-auto mb-4">
+            <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center text-primary-600 text-3xl mx-auto mb-4">
               🛒
             </div>
-            <h2 className="text-xl font-bold text-gray-800 mb-2">Confirm Order?</h2>
-            <p className="text-gray-500 text-sm mb-6">Are you sure you want to place the order with Cash on Delivery? Total: <strong className="text-gray-900">₹{grandTotal.toFixed(2)}</strong></p>
+            <h2 className="text-xl font-black text-gray-800 mb-2">Confirm Order?</h2>
+            <p className="text-gray-500 text-sm mb-6">Placing order via <strong className="text-primary-600 uppercase">{paymentMethod === 'Razorpay' ? 'Secure Online Payment' : 'Cash on Delivery'}</strong>. Total Amount: <strong className="text-gray-900">₹{grandTotal.toFixed(2)}</strong></p>
             <div className="flex gap-3">
               <button onClick={() => setShowConfirmModal(false)} className="flex-1 py-2 rounded-lg font-bold text-gray-500 bg-gray-100 hover:bg-gray-200 transition-colors">Cancel</button>
-              <button onClick={confirmOrder} disabled={isProcessing} className="flex-1 py-2 rounded-lg font-bold text-white bg-[#0ea5e9] hover:bg-[#0284c7] transition-colors flex justify-center items-center">
+              <button onClick={confirmOrder} disabled={isProcessing} className="flex-1 py-2 rounded-lg font-bold text-white bg-primary-500 hover:bg-primary-600 transition-colors flex justify-center items-center">
                 {isProcessing ? 'Processing...' : 'Confirm'}
               </button>
             </div>

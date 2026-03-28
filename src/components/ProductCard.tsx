@@ -17,6 +17,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onRequestLogin, simp
   const { user } = useAuth();
   const navigate = useNavigate();
   const [adding, setAdding] = useState(false);
+  const [toast, setToast] = useState<{ msg: string; type: 'cart' | 'wish' | '' }>({ msg: '', type: '' });
+
+  const showToast = (msg: string, type: 'cart' | 'wish') => {
+    setToast({ msg, type });
+    setTimeout(() => setToast({ msg: '', type: '' }), 2500);
+  };
 
   // FIX: Null-safe check — i.product could be null if product was deleted from DB
   const cartItem = cart?.items.find(i => i.product && i.product._id === product._id) ?? null;
@@ -33,6 +39,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onRequestLogin, simp
     try {
       setAdding(true);
       await addToCart(product._id, 1);
+      showToast('🛒 Added to cart!', 'cart');
     } finally {
       setAdding(false);
     }
@@ -44,13 +51,15 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onRequestLogin, simp
       else navigate('/login');
       return;
     }
+    const wasWished = isInWishlist(product._id);
     toggleWishlist(product._id);
+    showToast(wasWished ? '💔 Removed from wishlist' : '❤️ Added to wishlist!', 'wish');
   };
 
   const handleImgError = (e: React.SyntheticEvent<HTMLImageElement>) => {
     const target = e.target as HTMLImageElement;
     target.onerror = null;
-    target.src = `https://placehold.co/300x300/f0f9ff/0ea5e9?text=${encodeURIComponent(product.name.slice(0, 12))}`;
+    target.src = `https://placehold.co/300x300/f0f7ff/3b82f6?text=${encodeURIComponent(product.name.slice(0, 12))}`;
   };
 
   const discountPct = product.originalPrice && product.originalPrice > product.price
@@ -58,7 +67,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onRequestLogin, simp
     : 0;
 
   return (
-    <div className="bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col relative group">
+    <div className="bg-white rounded-[14px] overflow-hidden border border-gray-100 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] transition-all duration-300 flex flex-col relative group">
+
+      {/* Micro Toast — Cart / Wishlist feedback */}
+      {toast.msg && (
+        <div className={`absolute top-2 left-1/2 -translate-x-1/2 z-30 px-3 py-1.5 rounded-full text-white text-[10px] font-bold whitespace-nowrap shadow-lg transition-all animate-bounce-in ${toast.type === 'cart' ? 'bg-primary-500' : 'bg-rose-500'}`}>
+          {toast.msg}
+        </div>
+      )}
 
       {/* Discount Badge */}
       {discountPct > 0 && (
@@ -123,10 +139,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onRequestLogin, simp
             {/* Price row */}
             <div className="flex items-baseline gap-2 mt-auto mb-2">
               <span className="text-primary-500 font-extrabold text-base sm:text-lg leading-none">
-                ₹{product.price}
+                ₹{product.price.toFixed(2)}
               </span>
               {product.originalPrice && product.originalPrice > product.price && (
-                <span className="text-gray-400 line-through text-xs">₹{product.originalPrice}</span>
+                <span className="text-gray-400 line-through text-xs">₹{product.originalPrice.toFixed(2)}</span>
               )}
             </div>
 

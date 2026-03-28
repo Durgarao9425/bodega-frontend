@@ -114,7 +114,7 @@ const Header: React.FC = () => {
 
   return (
     <>
-      <header className="bg-primary-500 text-white sticky top-0 z-50 w-full shadow-md">
+    <header className="bg-primary-700 shadow-md sticky top-0 z-[100] w-full border-b border-white/5 text-white">
 
         {/* ── Main Nav Row ── */}
         <div className="w-full px-3 sm:px-4 md:px-8 py-2.5 flex items-center justify-between gap-3">
@@ -131,24 +131,23 @@ const Header: React.FC = () => {
           </button>
 
           {/* Brand Name / Logo (Mobile: Left-aligned, Desktop: Left) */}
-          <Link to="/" className="flex flex-col shrink-0 group order-2 md:order-1" onClick={() => setMobileMenuOpen(false)}>
+          <Link to="/" className="flex flex-col shrink-0 group order-2 md:order-1 self-center" onClick={() => setMobileMenuOpen(false)}>
             <div className="flex items-center">
-              <span className="text-orange-500 font-extrabold text-2xl sm:text-3xl leading-none">S</span>
-              <span className="text-white font-bold text-2xl sm:text-3xl leading-none tracking-tight">toreWave</span>
+              <span className="text-orange-400 font-extrabold text-xl sm:text-2xl md:text-3xl leading-none">S</span>
+              <span className="text-white font-bold text-xl sm:text-2xl md:text-3xl leading-none">toreWave</span>
             </div>
-            <span className="text-[8px] uppercase tracking-widest text-blue-100 font-bold hidden sm:block">BEST IN QUALITY</span>
+            <span className="text-[7px] md:text-[8px] uppercase tracking-widest text-primary-100 font-bold hidden sm:block">BEST IN QUALITY</span>
           </Link>
 
-          {/* Desktop Search (Hidden on Mobile) */}
-          <div className="flex-1 max-w-xl hidden md:block mx-4 order-2">
-            <form onSubmit={handleSearch} className="flex bg-white rounded-md overflow-hidden h-10 shadow-sm">
+          <div className="hidden md:flex flex-1 max-w-xl mx-4 order-2">
+            <form onSubmit={handleSearch} className="flex bg-white rounded-xl overflow-hidden h-10 shadow-sm w-full">
               <select
                 value={searchCategory}
                 onChange={e => setSearchCategory(e.target.value)}
-                className="bg-gray-50 text-gray-700 px-2 text-xs border-r border-gray-200 outline-none w-32 cursor-pointer font-medium"
+                className="bg-gray-50 text-gray-700 px-3 text-xs border-r border-gray-100 outline-none w-32 cursor-pointer font-bold appearance-none"
               >
                 {CATEGORIES.map(c => (
-                  <option key={c.name} value={c.name}>{c.name}</option>
+                  <option key={c.name} value={c.name} className="text-gray-800">{c.name}</option>
                 ))}
               </select>
               <input
@@ -156,10 +155,10 @@ const Header: React.FC = () => {
                 value={searchTerm}
                 onChange={e => setSearchTerm(e.target.value)}
                 placeholder="Search for items..."
-                className="flex-1 px-4 outline-none text-sm text-gray-800"
+                className="flex-1 px-4 bg-transparent outline-none text-sm text-gray-800 placeholder-gray-400 font-medium"
               />
-              <button type="submit" className="bg-white px-4 text-gray-800 flex items-center justify-center hover:bg-gray-50 transition-colors">
-                <svg stroke="currentColor" fill="none" strokeWidth="2.5" viewBox="0 0 24 24" height="18" width="18">
+              <button type="submit" className="px-5 text-primary-600 flex items-center justify-center hover:bg-gray-50 transition-colors">
+                <svg stroke="currentColor" fill="none" strokeWidth="2.5" viewBox="0 0 24 24" height="20" width="20">
                   <circle cx="11" cy="11" r="8" />
                   <line x1="21" y1="21" x2="16.65" y2="16.65" />
                 </svg>
@@ -167,56 +166,56 @@ const Header: React.FC = () => {
             </form>
           </div>
 
-          {/* Desktop Only Icons & Profile - order 3 */}
-          <div className="hidden md:flex items-center gap-4 shrink-0 order-3">
-            {/* Wishlist icon */}
-            <Link to="/wishlist" className="flex items-center gap-1 hover:text-green-200 transition-colors relative">
+          {/* Icons & Profile - order 3 */}
+          <div className="flex items-center gap-2 sm:gap-4 shrink-0 order-3">
+            {/* Wishlist icon (visible on mobile, text hidden) */}
+            <Link to="/wishlist" className="flex items-center gap-1 hover:text-green-200 transition-colors relative p-1">
               <div className="relative">
                 <svg stroke="currentColor" fill="none" strokeWidth="2" viewBox="0 0 24 24" height="22" width="22">
                   <path d="M20.8 4.6a5.5 5.5 0 00-7.7 0L12 5.7l-1.1-1.1a5.5 5.5 0 00-7.8 7.8l1.1 1.1L12 21l7.8-7.8 1.1-1.1a5.5 5.5 0 000-7.7z" />
                 </svg>
                 {wishlistCount > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[9px] w-4 h-4 rounded-full flex items-center justify-center font-bold border border-[#0ea5e9]">
+                  <span className="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[8px] w-3.5 h-3.5 rounded-full flex items-center justify-center font-bold border border-primary-500">
                     {wishlistCount > 9 ? '9+' : wishlistCount}
                   </span>
                 )}
               </div>
               <span className="text-xs font-semibold hidden lg:inline">Wishlist</span>
             </Link>
-
-            {/* Cart */}
-            <Link to="/cart" className="flex items-center gap-1.5 hover:text-green-200 transition-colors">
+          
+            {/* Cart (visible on mobile, text hidden) */}
+            <Link to="/cart" className="flex items-center gap-1.5 hover:text-green-200 transition-colors p-1">
               <div className="relative">
                 <svg stroke="currentColor" fill="none" strokeWidth="2" viewBox="0 0 24 24" height="22" width="22">
                   <circle cx="9" cy="21" r="1" /><circle cx="20" cy="21" r="1" />
                   <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
                 </svg>
                 {cartCount > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[9px] w-4 h-4 rounded-full flex items-center justify-center font-bold border border-[#0ea5e9]">
+                  <span className="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[8px] w-3.5 h-3.5 rounded-full flex items-center justify-center font-bold border border-primary-500">
                     {cartCount > 9 ? '9+' : cartCount}
                   </span>
                 )}
               </div>
-              <span className="text-xs sm:text-sm font-semibold whitespace-nowrap">
-                Cart{cart?.totalPrice ? <span className="ml-1 hidden lg:inline text-green-200">₹{cart.totalPrice}</span> : null}
+              <span className="text-xs sm:text-sm font-semibold whitespace-nowrap hidden lg:inline">
+                Cart{cart?.totalPrice ? <span className="ml-1 text-green-200">₹{cart.totalPrice.toFixed(2)}</span> : null}
               </span>
             </Link>
-
+          
             {/* Profile / Login */}
             {user ? (
-              <div className="relative" ref={userMenuRef}>
+              <div className="relative h-8" ref={userMenuRef}>
                 <button
-                  className="flex items-center gap-1.5 hover:opacity-80 transition-opacity"
+                  className="flex items-center gap-1.5 hover:opacity-80 transition-opacity h-full"
                   onClick={() => { setShowUserMenu(v => !v); setShowNotifications(false); }}
                 >
-                  <div className="w-7 h-7 sm:w-8 sm:h-8 bg-white/20 rounded-full flex items-center justify-center text-xs font-bold border-2 border-white/40 overflow-hidden">
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 bg-white/20 rounded-full flex items-center justify-center text-[10px] sm:text-xs font-bold border border-white/40 overflow-hidden">
                     {user.name?.trim() ? user.name.charAt(0).toUpperCase() : user.phone.slice(-2)}
                   </div>
                   <span className="text-xs sm:text-sm font-semibold hidden lg:block max-w-[100px] truncate">
                     {displayName}
                   </span>
                 </button>
-
+          
                 {showUserMenu && (
                   <div className="absolute right-0 mt-3 w-52 bg-white rounded-2xl shadow-2xl border border-gray-100 z-[60] text-gray-800 overflow-hidden animate-fade-in">
                     <div className="px-4 py-3 bg-gray-50 border-b border-gray-100">
@@ -229,11 +228,9 @@ const Header: React.FC = () => {
                     </Link>
                     <Link to="/wishlist" className="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 border-b border-gray-50" onClick={() => setShowUserMenu(false)}>
                       <span>❤️</span> Wishlist
-                      {wishlistCount > 0 && <span className="ml-auto bg-red-100 text-red-500 text-xs font-bold px-1.5 py-0.5 rounded-full">{wishlistCount}</span>}
                     </Link>
                     <Link to="/cart" className="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 border-b border-gray-50" onClick={() => setShowUserMenu(false)}>
                       <span>🛒</span> My Cart
-                      {cartCount > 0 && <span className="ml-auto bg-green-100 text-green-600 text-xs font-bold px-1.5 py-0.5 rounded-full">{cartCount}</span>}
                     </Link>
                     <button
                       onClick={() => { logout(); setShowUserMenu(false); }}
@@ -247,35 +244,43 @@ const Header: React.FC = () => {
             ) : (
               <Link
                 to="/login"
-                className="flex items-center gap-2 bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg transition-all border border-white/20 backdrop-blur-sm"
+                className="flex items-center gap-1.5 bg-white/10 hover:bg-white/20 px-2.5 py-1.5 rounded-lg transition-all border border-white/10 backdrop-blur-sm"
               >
-                <span className="text-xs font-bold">Login</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" height="16" width="16">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                </svg>
+                <span className="text-[10px] sm:text-xs font-bold">Login</span>
               </Link>
             )}
           </div>
         </div>
 
         {/* ── Mobile Search Bar ── */}
-        <div className="md:hidden bg-primary-600 px-3 pb-2 pt-1 border-t border-blue-900/10">
-          <form onSubmit={handleSearch} className="flex bg-white rounded-lg overflow-hidden h-9 shadow-sm">
-            <select
-              value={searchCategory}
-              onChange={e => setSearchCategory(e.target.value)}
-              className="bg-gray-50 text-gray-700 text-xs border-r border-gray-200 outline-none px-2 w-24 cursor-pointer"
-            >
-              {CATEGORIES.map(c => (
-                <option key={c.name} value={c.name}>{c.name}</option>
-              ))}
-            </select>
+        <div className="md:hidden bg-primary-700 px-3 pb-2.5 pt-0.5 border-t border-white/10">
+          <form onSubmit={handleSearch} className="flex bg-white rounded-xl overflow-hidden h-9 shadow-inner">
+            <div className="relative flex items-center shrink-0">
+              <select
+                value={searchCategory}
+                onChange={e => setSearchCategory(e.target.value)}
+                className="bg-gray-50 text-gray-700 text-[10px] border-r border-gray-100 outline-none px-2 w-[72px] cursor-pointer font-bold appearance-none h-full"
+              >
+                {CATEGORIES.map(c => (
+                  <option key={c.name} value={c.name}>{c.name}</option>
+                ))}
+              </select>
+              <div className="absolute right-1 pointer-events-none text-gray-400">
+                <svg className="w-2 h-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M19 9l-7 7-7-7"/></svg>
+              </div>
+            </div>
             <input
               type="text"
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
-              placeholder="Search for items..."
-              className="flex-1 px-3 outline-none text-sm text-gray-800 min-w-0"
+              placeholder="Search items..."
+              className="flex-1 px-3 outline-none text-[13px] text-gray-800 min-w-0 font-medium placeholder-gray-400"
             />
-            <button type="submit" className="bg-white px-4 text-gray-800 flex items-center justify-center hover:bg-gray-50">
-              <svg stroke="currentColor" fill="none" strokeWidth="2.5" viewBox="0 0 24 24" height="18" width="18">
+            <button type="submit" className="bg-white px-3.5 text-primary-600 flex items-center justify-center hover:bg-gray-50 active:scale-95 transition-transform">
+              <svg stroke="currentColor" fill="none" strokeWidth="3" viewBox="0 0 24 24" height="16" width="16">
                 <circle cx="11" cy="11" r="8" />
                 <line x1="21" y1="21" x2="16.65" y2="16.65" />
               </svg>
@@ -299,7 +304,7 @@ const Header: React.FC = () => {
             <div className="bg-primary-500 text-white p-4 flex items-center justify-between">
               <div>
                 <div className="flex items-center">
-                  <span className="text-orange-500 font-extrabold text-2xl leading-none">S</span>
+                  <span className="text-orange-400 font-extrabold text-2xl leading-none">S</span>
                   <span className="text-white font-bold text-2xl leading-none">toreWave</span>
                 </div>
                 {user && <p className="text-[10px] text-green-200 mt-0.5">Hello, {displayName}!</p>}
@@ -339,12 +344,12 @@ const Header: React.FC = () => {
                   key={item.path}
                   to={item.path}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold text-gray-700 hover:bg-green-50 hover:text-[#0ea5e9] transition-colors"
+                  className="flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold text-gray-700 hover:bg-primary-50 hover:text-primary-500 transition-colors"
                 >
                   <span className="text-lg w-6 text-center">{item.icon}</span>
                   <span className="flex-1">{item.label}</span>
                   {item.badge && item.badge > 0 && (
-                    <span className="bg-[#0ea5e9] text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center">
+                    <span className="bg-primary-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center">
                       {item.badge}
                     </span>
                   )}
@@ -358,9 +363,9 @@ const Header: React.FC = () => {
                     key={cat.name}
                     to={cat.path}
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-green-50 hover:text-[#0ea5e9] transition-colors"
+                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-primary-50 hover:text-primary-500 transition-colors"
                   >
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#0ea5e9] shrink-0" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-primary-500 shrink-0" />
                     {cat.name}
                   </Link>
                 ))}

@@ -57,7 +57,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
         </button>
 
         {/* Icon */}
-        <div className="w-16 h-16 bg-green-50 rounded-2xl flex items-center justify-center mx-auto mb-4 text-3xl">
+        <div className="w-16 h-16 bg-primary-50 rounded-2xl flex items-center justify-center mx-auto mb-4 text-3xl">
           🛒
         </div>
 
@@ -68,7 +68,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
         <p className="text-sm text-gray-500 mb-6 leading-relaxed">
           {message}
           <br />
-          <span className="text-[#0ea5e9] font-semibold">Login to add items to your cart!</span>
+          <span className="text-primary-500 font-semibold">Login to add items to your cart!</span>
         </p>
 
         {/* Actions */}
@@ -81,7 +81,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
           </button>
           <button
             onClick={() => { navigate('/login'); onClose(); }}
-            className="flex-1 py-2.5 px-4 bg-[#0ea5e9] text-white rounded-xl font-bold text-sm hover:bg-[#0284c7] transition-colors shadow-md"
+            className="flex-1 py-2.5 px-4 bg-primary-500 text-white rounded-xl font-bold text-sm hover:bg-primary-600 transition-colors shadow-md"
           >
             Login
           </button>
