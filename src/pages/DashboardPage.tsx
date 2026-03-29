@@ -104,20 +104,33 @@ const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
+  const [recommendedProducts, setRecommendedProducts] = useState<Product[]>([]);
+  const [recentlyOpened, setRecentlyOpened] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const carouselRef = useRef<HTMLDivElement>(null);
+  const recommendedCarouselRef = useRef<HTMLDivElement>(null);
+  const recentlyCarouselRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     api.get('/products')
-      .then(r => setFeaturedProducts(r.data.products || []))
+      .then(r => {
+        const all = r.data.products || [];
+        setFeaturedProducts(all);
+        // "Recommended for You" - pick 6 somewhat random or diverse products
+        setRecommendedProducts([...all].sort(() => 0.5 - Math.random()).slice(0, 6));
+      })
       .catch(() => { })
       .finally(() => setIsLoading(false));
+
+    // Load recently opened products from localStorage
+    const saved = JSON.parse(localStorage.getItem('recentlyOpened') || '[]');
+    setRecentlyOpened(saved);
   }, []);
 
   // Working carousel nav
-  const scrollCarousel = (dir: 'left' | 'right') => {
-    carouselRef.current?.scrollBy({ left: dir === 'right' ? 900 : -900, behavior: 'smooth' });
+  const scrollCarousel = (ref: React.RefObject<HTMLDivElement>, dir: 'left' | 'right') => {
+    ref.current?.scrollBy({ left: dir === 'right' ? 900 : -900, behavior: 'smooth' });
   };
 
   return (
@@ -286,13 +299,13 @@ const DashboardPage: React.FC = () => {
             </div>
             <div className="flex gap-2">
               <button
-                onClick={() => scrollCarousel('left')}
+                onClick={() => scrollCarousel(carouselRef, 'left')}
                 className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-gray-200 bg-white flex items-center justify-center text-gray-500 hover:bg-primary-500 hover:text-white hover:border-primary-500 transition-all shadow-sm"
               >
                 ‹
               </button>
               <button
-                onClick={() => scrollCarousel('right')}
+                onClick={() => scrollCarousel(carouselRef, 'right')}
                 className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-gray-200 bg-white flex items-center justify-center text-gray-500 hover:bg-primary-500 hover:text-white hover:border-primary-500 transition-all shadow-sm"
               >
                 ›
@@ -335,6 +348,86 @@ const DashboardPage: React.FC = () => {
             </div>
           )}
         </section>
+
+        {/* ── RECOMMENDED FOR YOU ── */}
+        <section className="mb-12">
+          <div className="flex justify-between items-center mb-5">
+            <div>
+              <h2 className="text-xl sm:text-2xl font-semibold text-gray-700">Recommended for You</h2>
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={() => scrollCarousel(recommendedCarouselRef, 'left')}
+                className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-gray-200 bg-white flex items-center justify-center text-gray-500 hover:bg-primary-500 hover:text-white hover:border-primary-500 transition-all shadow-sm"
+              >
+                ‹
+              </button>
+              <button
+                onClick={() => scrollCarousel(recommendedCarouselRef, 'right')}
+                className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-gray-200 bg-white flex items-center justify-center text-gray-500 hover:bg-primary-500 hover:text-white hover:border-primary-500 transition-all shadow-sm"
+              >
+                ›
+              </button>
+            </div>
+          </div>
+
+          {isLoading ? (
+            <Loader text="Loading..." />
+          ) : (
+            <div ref={recommendedCarouselRef} className="flex gap-4 overflow-x-auto no-scrollbar pb-2">
+              {recommendedProducts.length > 0 ? (
+                recommendedProducts.map(p => (
+                  <div key={p._id} className="w-44 sm:w-48 md:w-56 shrink-0">
+                    <ProductCard
+                      product={p}
+                      onRequestLogin={() => setShowLoginModal(true)}
+                    />
+                  </div>
+                ))
+              ) : (
+                <div className="w-full py-12 text-center text-gray-400 font-medium">
+                  We'll suggest items you might like soon!
+                </div>
+              )}
+            </div>
+          )}
+        </section>
+
+        {/* ── RECENTLY OPENED ── */}
+        {recentlyOpened.length > 0 && (
+          <section className="mb-12">
+            <div className="flex justify-between items-center mb-5">
+              <div>
+                <h2 className="text-xl sm:text-2xl font-semibold text-gray-700">Recently Opened</h2>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => scrollCarousel(recentlyCarouselRef, 'left')}
+                  className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-gray-200 bg-white flex items-center justify-center text-gray-500 hover:bg-primary-500 hover:text-white hover:border-primary-500 transition-all shadow-sm"
+                >
+                  ‹
+                </button>
+                <button
+                  onClick={() => scrollCarousel(recentlyCarouselRef, 'right')}
+                  className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-gray-200 bg-white flex items-center justify-center text-gray-500 hover:bg-primary-500 hover:text-white hover:border-primary-500 transition-all shadow-sm"
+                >
+                  ›
+                </button>
+              </div>
+            </div>
+
+            <div ref={recentlyCarouselRef} className="flex gap-4 overflow-x-auto no-scrollbar pb-2">
+              {recentlyOpened.map(p => (
+                <div key={p._id} className="w-44 sm:w-48 md:w-56 shrink-0">
+                  <ProductCard
+                    product={p}
+                    onRequestLogin={() => setShowLoginModal(true)}
+                  />
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* ── APP PROMO BANNER (matches reference) ── */}
         <section className="mb-12">

@@ -1,5 +1,5 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
 
 // Import Context Providers
 import { AuthProvider } from './context/AuthContext';
@@ -26,6 +26,15 @@ import TrackOrderPage from './pages/TrackOrderPage';
 import OrderSuccessPage from './pages/OrderSuccessPage';
 import { PrivacyPolicyPage, TermsPage, RefundPolicyPage, ShippingPolicyPage, ContactPage, AboutPage } from './pages/StaticPages';
 
+// Scroll to top on every route change
+const ScrollToTop = () => {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  return null;
+};
+
 // Inner component that uses auth context for global loader
 const AppRoutes: React.FC = () => {
   const { isLoading } = useAuth();
@@ -39,6 +48,7 @@ const AppRoutes: React.FC = () => {
     <WishlistProvider>
       <CartProvider>
         <Router>
+          <ScrollToTop />
           <Routes>
             {/* Public Routes - Anyone can browse! */}
             <Route path="/" element={<MainLayout><DashboardPage /></MainLayout>} />

@@ -33,6 +33,7 @@ const ProductDetailPage: React.FC = () => {
   const [[imgWidth, imgHeight], setSize] = useState([0, 0]);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     fetchProductDetails();
   }, [id]);
 
@@ -41,7 +42,16 @@ const ProductDetailPage: React.FC = () => {
       setIsLoading(true);
       setError('');
       const response = await api.get(`/products/${id}`);
-      setProduct(response.data.product);
+      const foundProduct = response.data.product;
+      setProduct(foundProduct);
+
+      // Track recently opened products
+      if (foundProduct) {
+        const recentlyOpened = JSON.parse(localStorage.getItem('recentlyOpened') || '[]');
+        const filtered = recentlyOpened.filter((p: any) => p._id !== foundProduct._id);
+        const updated = [foundProduct, ...filtered].slice(0, 10); // Keep last 10
+        localStorage.setItem('recentlyOpened', JSON.stringify(updated));
+      }
     } catch (err: any) {
       setError(err.response?.data?.message || 'Product not found');
     } finally {
@@ -123,7 +133,10 @@ const ProductDetailPage: React.FC = () => {
                 const y = e.clientY - top;
                 setXY([x, y]);
               }}
-              onMouseLeave={() => setShowMagnifier(false)}
+              onMouseLeave={() => {
+                setShowMagnifier(false);
+                setXY([0, 0]);
+              }}
             >
               <img 
                 ref={imgRef}
@@ -133,16 +146,17 @@ const ProductDetailPage: React.FC = () => {
                 onError={e => (e.target as HTMLImageElement).src = FALLBACK_IMAGE}
               />
 
-              {/* Advanced Magnifier Glass Overlay */}
+              {/* Advanced Magnifier Glass Overlay (Hidden on touch screens/mobile) */}
               <div
+                className="hidden sm:block"
                 style={{
-                  display: showMagnifier ? 'block' : 'none',
+                  display: (showMagnifier && x > 0 && y > 0) ? 'block' : 'none',
                   position: 'absolute',
                   pointerEvents: 'none',
-                  height: `200px`,
-                  width: `200px`,
-                  top: `${y - 100}px`,
-                  left: `${x - 100}px`,
+                  height: `180px`,
+                  width: `180px`,
+                  top: `${y - 90}px`,
+                  left: `${x - 90}px`,
                   opacity: 1,
                   border: '4px solid white',
                   backgroundColor: 'white',
@@ -152,9 +166,9 @@ const ProductDetailPage: React.FC = () => {
                   // Calculate background size assuming we magnify 2x
                   backgroundSize: `${imgWidth * 2}px ${imgHeight * 2}px`,
                   // Calculate position so the center of the magnifier is the mouse location
-                  backgroundPositionX: `${-x * 2 + 100}px`,
-                  backgroundPositionY: `${-y * 2 + 100}px`,
-                  boxShadow: '0 10px 25px rgba(0,0,0,0.15)',
+                  backgroundPositionX: `${-x * 2 + 90}px`,
+                  backgroundPositionY: `${-y * 2 + 90}px`,
+                  boxShadow: '0 10px 30px rgba(0,0,0,0.2)',
                   zIndex: 50,
                 }}
               />

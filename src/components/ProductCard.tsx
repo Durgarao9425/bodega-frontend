@@ -67,11 +67,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onRequestLogin, simp
     : 0;
 
   return (
-    <div className="bg-white rounded-[14px] overflow-hidden border border-gray-100 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] transition-all duration-300 flex flex-col relative group">
+    <div className="bg-white rounded-[14px] border border-gray-100 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] transition-all duration-300 flex flex-col relative group">
 
       {/* Micro Toast — Cart / Wishlist feedback */}
       {toast.msg && (
-        <div className={`absolute top-2 left-1/2 -translate-x-1/2 z-30 px-3 py-1.5 rounded-full text-white text-[10px] font-bold whitespace-nowrap shadow-lg transition-all animate-bounce-in ${toast.type === 'cart' ? 'bg-primary-500' : 'bg-rose-500'}`}>
+        <div className={`absolute -top-4 left-1/2 -translate-x-1/2 z-40 px-3 py-1.5 rounded-full text-white text-[10px] font-bold shadow-xl transition-all animate-bounce-in text-center min-w-[120px] ${toast.type === 'cart' ? 'bg-primary-500' : 'bg-rose-500'}`}>
           {toast.msg}
         </div>
       )}
@@ -102,7 +102,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onRequestLogin, simp
 
       {/* Product Image — clickable → product detail */}
       <div
-        className="w-full h-36 sm:h-40 bg-gray-50 flex items-center justify-center p-3 cursor-pointer overflow-hidden"
+        className="w-full h-36 sm:h-40 bg-gray-50 flex items-center justify-center p-3 cursor-pointer overflow-hidden rounded-t-[14px]"
         onClick={() => navigate(`/products/${product._id}`)}
       >
         <img

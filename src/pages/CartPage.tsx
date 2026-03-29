@@ -99,6 +99,7 @@ const CartPage: React.FC = () => {
   };
 
   const confirmOrder = async () => {
+    if (isProcessing) return;
     setIsProcessing(true);
     try {
       const address = addresses.find(a => a._id === selectedAddressId);
@@ -113,23 +114,26 @@ const CartPage: React.FC = () => {
       if (paymentMethod === 'Razorpay') {
         const razorpayAmount = Math.round(Number(grandTotal.toFixed(2)) * 100);
         
-        // Razorpay Live Test Integration
         const options = {
-          key: 'rzp_test_SWMGlUfAqZEvOA', // StoreWave Test Key
+          key: 'rzp_test_SWMGlUfAqZEvOA',
           amount: razorpayAmount,
           currency: 'INR',
           name: 'StoreWave',
           description: 'Payment for your grocery order',
-          image: '', // optional logo URL
+          image: '',
           handler: async function (response: any) {
-            // Payment success — save to DB
-            const orderRes = await api.post('/order/create', {
-              items, deliveryAddress: address, subTotal, deliveryFee: deliveryCharges, totalAmount: grandTotal, paymentMethod: 'Razorpay', razorpayPaymentId: response.razorpay_payment_id
-            });
-            clearCart();
-            setIsProcessing(false);
-            setShowConfirmModal(false);
-            navigate('/order-success', { state: { order: orderRes.data, paymentId: response.razorpay_payment_id, method: 'Razorpay' } });
+            try {
+              const orderRes = await api.post('/order/create', {
+                items, deliveryAddress: address, subTotal, deliveryFee: deliveryCharges, totalAmount: grandTotal, paymentMethod: 'Razorpay', razorpayPaymentId: response.razorpay_payment_id
+              });
+              clearCart();
+              setShowConfirmModal(false);
+              navigate('/order-success', { state: { order: orderRes.data, paymentId: response.razorpay_payment_id, method: 'Razorpay' } });
+            } catch (err) {
+              showToast('Error saving order. Please contact support.', 'error');
+            } finally {
+              setIsProcessing(false);
+            }
           },
           prefill: {
             name: user?.name,
@@ -148,14 +152,13 @@ const CartPage: React.FC = () => {
           }
         };
         const rzp = new (window as any).Razorpay(options);
-        // Intercept payment failures — show toast instead of browser alert
         rzp.on('payment.failed', (resp: any) => {
           setIsProcessing(false);
           setShowConfirmModal(false);
           showToast(`Payment failed: ${resp.error?.description || 'Please try another method.'}`, 'error');
         });
         rzp.open();
-        setIsProcessing(false);
+        // Do NOT set isProcessing to false here. Wait for handler or ondismiss.
       } else {
           const orderRes = await api.post('/order/create', {
             items, deliveryAddress: address, subTotal, deliveryFee: deliveryCharges, totalAmount: grandTotal, paymentMethod: 'Cash on Delivery'
@@ -184,13 +187,15 @@ const CartPage: React.FC = () => {
   return (
     <div className="bg-white">
 
-      {/* GLOBAL TOAST */}
+      {/* GLOBAL TOAST (Fixed for Mobile Cutoff) */}
       {toast.msg && (
-        <div className={`fixed top-20 left-1/2 -translate-x-1/2 ${toast.type === 'success' ? 'bg-primary-50 text-primary-600 border-primary-200' : toast.type === 'error' ? 'bg-red-50 text-red-500 border-red-200' : 'bg-blue-50 text-blue-600 border-blue-200'} border px-4 sm:px-8 py-3 sm:py-4 rounded-2xl font-black text-sm sm:text-base shadow-[0_20px_500px_rgba(0,0,0,0.15)] z-[999] animate-fade-in flex items-center gap-3 sm:gap-4 w-[92%] max-w-sm sm:min-w-[320px]`}>
-          <span className="text-xl sm:text-2xl shrink-0">
-            {toast.type === 'success' ? '✅' : toast.type === 'error' ? '❌' : 'ℹ️'}
-          </span>
-          <span className="leading-tight">{toast.msg}</span>
+        <div className="fixed bottom-10 left-4 right-4 z-[999] flex justify-center animate-fade-in pointer-events-none">
+          <div className={`px-4 py-3 rounded-2xl font-bold text-sm shadow-[0_10px_40px_rgba(0,0,0,0.15)] flex items-center gap-3 w-full max-w-[400px] border-2 pointer-events-auto ${toast.type === 'success' ? 'bg-primary-50 text-primary-600 border-primary-200' : toast.type === 'error' ? 'bg-red-50 text-red-500 border-red-200' : 'bg-blue-50 text-blue-600 border-blue-200'}`}>
+            <span className="text-xl shrink-0">
+              {toast.type === 'success' ? '✅' : toast.type === 'error' ? '❌' : 'ℹ️'}
+            </span>
+            <span className="leading-tight truncate sm:whitespace-normal">{toast.msg}</span>
+          </div>
         </div>
       )}
 
