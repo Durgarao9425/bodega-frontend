@@ -71,31 +71,28 @@ const SECTIONS = [
   {
     title: 'Groceries',
     items: [
-      { name: 'Aata, Maida & Besan', img: 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?q=80&w=500&h=400&fit=crop' },
-      { name: 'Dals & Pulses', img: 'https://images.unsplash.com/photo-1515543237350-b3eea1ec8082?q=80&w=500&h=400&fit=crop' },
+      { name: 'Aata, maida, besan & sooji', display: 'Aata, Maida & Besan', img: 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?q=80&w=500&h=400&fit=crop' },
+      { name: 'Dals, Pulses & Grains', display: 'Dals & Pulses', img: 'https://images.unsplash.com/photo-1515543237350-b3eea1ec8082?q=80&w=500&h=400&fit=crop' },
       { name: 'Masala & Spices', img: 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?q=80&w=500&h=400&fit=crop' },
       { name: 'Oil & Ghee', img: 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?q=80&w=500&h=400&fit=crop' },
-      { name: 'Rice & Grains', img: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?q=80&w=500&h=400&fit=crop' },
     ],
   },
   {
-    title: 'Fresh Fruits & Vegetables',
+    title: 'Fruits & Vegetables',
+    display: 'Fresh Fruits & Vegetables',
     items: [
-      { name: 'Fresh Fruits', img: 'https://images.unsplash.com/photo-1610832958506-aa56368176cf?q=80&w=500&h=400&fit=crop' },
-      { name: 'Fresh Vegetables', img: 'https://images.unsplash.com/photo-1566385101042-1a0aa0c1268c?q=80&w=500&h=400&fit=crop' },
-      { name: 'Exotic Veggies', img: 'https://images.unsplash.com/photo-1457296898342-cdd24585d095?q=80&w=500&h=400&fit=crop' },
+      { name: 'Fruits', display: 'Fresh Fruits', img: 'https://images.unsplash.com/photo-1610832958506-aa56368176cf?q=80&w=500&h=400&fit=crop' },
+      { name: 'Vegetables', display: 'Fresh Vegetables', img: 'https://images.unsplash.com/photo-1566385101042-1a0aa0c1268c?q=80&w=500&h=400&fit=crop' },
+      { name: 'Fresh Fruits', display: 'Imported Fruits', img: 'https://images.unsplash.com/photo-1457296898342-cdd24585d095?q=80&w=500&h=400&fit=crop' },
     ],
   },
   {
     title: 'Households',
     items: [
-      { name: 'Breakfast & Cereals', img: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?q=80&w=500&h=400&fit=crop' },
+      { name: 'Breakfast & cereals', display: 'Breakfast & Cereals', img: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?q=80&w=500&h=400&fit=crop' },
       { name: 'Detergents & Cleaning', img: 'https://images.unsplash.com/photo-1585771724684-38269d6639fd?q=80&w=500&h=400&fit=crop' },
-      { name: 'Skin & Face Care', img: 'https://images.unsplash.com/photo-1556228578-0d85b1a4d571?q=80&w=500&h=400&fit=crop' },
-      { name: 'Hair Care', img: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?q=80&w=500&h=400&fit=crop' },
-      { name: 'Oral Care', img: 'https://images.unsplash.com/photo-1607613009820-a29f7bb81c04?q=80&w=500&h=400&fit=crop' },
-      { name: 'Soaps & Body Wash', img: 'https://images.unsplash.com/photo-1600857062241-98e5dba7f214?q=80&w=500&h=400&fit=crop' },
-      { name: 'Pasta & Noodles', img: 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?q=80&w=500&h=400&fit=crop' },
+      { name: 'Facewash & skincare', display: 'Skin & Face Care', img: 'https://images.unsplash.com/photo-1556228578-0d85b1a4d571?q=80&w=500&h=400&fit=crop' },
+      { name: 'Hair care', display: 'Hair Care', img: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?q=80&w=500&h=400&fit=crop' },
     ],
   },
 ];
@@ -224,7 +221,7 @@ const DashboardPage: React.FC = () => {
             {HERO_CATEGORIES.map(cat => (
               <div
                 key={cat.name}
-                onClick={() => navigate(cat.path)}
+                onClick={() => navigate(`/category/${encodeURIComponent(cat.name)}`)}
                 className="rounded-2xl overflow-hidden flex flex-col items-center justify-center cursor-pointer group hover:scale-[1.04] hover:shadow-xl transition-all duration-300 py-4 sm:py-5 px-3 select-none border border-black/5"
                 style={{ background: `linear-gradient(135deg, ${cat.from}, ${cat.to})` }}
               >
@@ -248,7 +245,7 @@ const DashboardPage: React.FC = () => {
               <div key={section.title} className="mb-10">
                 {/* Added bottom border and distinct coloring to match references */}
                 <div className="flex items-center justify-between mb-4 border-b border-gray-100 pb-2">
-                  <h2 className="text-base sm:text-lg font-bold text-primary-600">{section.title}</h2>
+                  <h2 className="text-base sm:text-lg font-bold text-primary-600">{(section as any).display || section.title}</h2>
                   <button
                     onClick={() => navigate(`/category/${encodeURIComponent(section.title)}/subcategories`)}
                     className="text-primary-600 text-[10px] sm:text-xs font-bold hover:underline"
@@ -279,7 +276,7 @@ const DashboardPage: React.FC = () => {
                       </div>
                       <div className="p-2 sm:p-4 flex items-center justify-center bg-white min-h-[50px]">
                         <span className="text-[10px] sm:text-xs font-bold text-gray-800 text-center leading-tight">
-                          {item.name}
+                          {(item as any).display || item.name}
                         </span>
                       </div>
                     </div>

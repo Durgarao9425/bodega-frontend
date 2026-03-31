@@ -137,6 +137,11 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ isWishlist }) => {
           if (targetCat === 'bakery' && productCat === 'bakary') return true;
           if (targetCat === 'snacks' && productCat === 'snaks') return true;
           
+          // Handle 'Fruits & Vegetables' variations
+          if (targetCat === 'fresh fruits & vegetables' || targetCat === 'fruits & vegetables') {
+            if (productCat === 'fruits & vegetables' || productCat === 'fresh fruits & vegetables') return true;
+          }
+          
           // Handle 'Dairy & Eggs' variations (e.g., 'dairy,eggs' or just 'dairy')
           if (targetCat === 'dairy & eggs') {
             const dairyVariations = ['dairy & eggs', 'dairy,eggs', 'dairy', 'eggs'];
@@ -179,7 +184,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ isWishlist }) => {
   const handleCategoryClick = (cat: string) => {
     setActiveCategory(cat);
     setActiveSubcategory('');
-    navigate('/products', { replace: true });
+    navigate(`/category/${encodeURIComponent(cat)}`, { replace: true });
   };
 
   const resetFilters = () => {
